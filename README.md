@@ -16,7 +16,7 @@ mvn package
 
 // use Blockchain
 
-	HTTPProvider provider = new HTTPProvider("http://3.0.192.33:30001/", 21);
+	HTTPProvider provider = new HTTPProvider("http://127.0.0.1:30001/", 21);
 		Blockchain blockchain = new Blockchain(provider);
 		try {
 			String json = blockchain.getChainInfo();
@@ -37,7 +37,7 @@ mvn package
 	t.setTime(90, 0);
 	
 	// Creating Transaction
-	HTTPProvider provider = new HTTPProvider("http://3.0.192.33:30001/", 21);				
+	HTTPProvider provider = new HTTPProvider("http://127.0.0.1:30001/", 21);				
 	Transaction transaction = new Transaction(provider);
 	
 	// Signing Transaction

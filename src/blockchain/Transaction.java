@@ -1,10 +1,12 @@
 package blockchain;
 
 import java.io.IOException;
+import java.util.concurrent.TimeoutException;
 
 import com.google.gson.Gson;
 
 import iost.json.TransactionObject;
+import iost.json.TxReceipt;
 import provider.HTTPProvider;
 
 public class Transaction {
@@ -12,9 +14,10 @@ public class Transaction {
 	/**
 	 *
 	 * @Stringructor
-	 * @param {RPC}rpc - 通过rpc生�?Transaction模�?�
+	 * @param {RPC}rpc -
 	 */
 	private HTTPProvider _provider;
+
 	/**
 	 * @param _provider
 	 * @param tx
@@ -91,5 +94,25 @@ public class Transaction {
 		String api = "getTxReceiptByTxHash/" + txHash;
 		return this._provider.sendGet(api);
 	}
+
+    public TxReceipt Polling(String hash, long intervalInMillis, int times) throws TimeoutException {
+        String resStr = "";
+        for (int i = 0; i < times; i ++) {
+            try {
+                resStr = this.getTxReceiptByTxHash(hash);
+            } catch (IOException e) {
+                try {
+                    Thread.sleep(intervalInMillis);
+                } catch (InterruptedException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        }
+        if (!resStr.equals("")) {
+            return TxReceipt.getTxReceipt(resStr);
+        } else {
+            throw new TimeoutException();
+        }
+    }
 
 }

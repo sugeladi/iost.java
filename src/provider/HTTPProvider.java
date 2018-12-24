@@ -31,6 +31,14 @@ public class HTTPProvider {
 		this._timeout = timeout;
 	}
 
+	public int get_timeout() {
+		return _timeout;
+	}
+
+	public void set_timeout(int _timeout) {
+		this._timeout = _timeout;
+	}
+
 	/**
 	 * @param {string}url - 节点的API
 	 * @param {string}json - 参数，以json string表示

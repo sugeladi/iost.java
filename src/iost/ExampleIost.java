@@ -1,4 +1,7 @@
+package iost;
+
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -6,24 +9,20 @@ import java.security.NoSuchProviderException;
 import java.security.SignatureException;
 import java.security.spec.InvalidKeySpecException;
 
-import org.bouncycastle.util.encoders.Hex;
-
 import blockchain.Blockchain;
 import blockchain.Transaction;
 import crypto.Base58;
-import crypto.Codec;
 import crypto.Ed25519;
-import crypto.IostAlgo;
 import crypto.iost.KeyPair;
 import iost.json.ResponseHash;
 import provider.HTTPProvider;
 
 class ExampleIost {
 
-public static void main(String args[]) {
-		
-		ExampleIost algo = new ExampleIost();
-		algo.blockchain();
+    public static void main(String args[]) throws InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchProviderException, InvalidKeySpecException, UnsupportedEncodingException {
+        ExampleIost algo = new ExampleIost();
+    	algo.transfer();
+        algo.blockchain();
 		algo.transfer();
 		algo.newAccount();
 	}
@@ -41,24 +40,21 @@ public static void main(String args[]) {
 			e.printStackTrace();
 		}
 	}
-	/**
-	 * transfer tokens
-	 */
 	
 	public void transfer() {
 		
 	try {
 		
        HTTPProvider provider = new HTTPProvider("http://3.0.192.33:30001/", 21);
-		IOST iost = new IOST(100, 100000, 0, provider);		
-		String publisher = "test";		
+		IOST iost = new IOST(1, 100000, 0, provider);		
+		String publisher = "testaccount";		
 		String pk = "4LNkrANP7tzvyy24GKZFRnUPpawLrD6nbrusbB7sJr9Kb2G9oW5dmdjENcFBkYAfKWNqKf7eywLqajxXSRc5ANVi";
-		KeyPair kp = iost.getKeyPair(pk);
+		byte[] pks = Base58.decode(pk);		
+		KeyPair kp = new KeyPair(pks,Ed25519.ALGORITHMNUM);		
 		iost.setPublisher(publisher, kp);
-		Transaction transaction = iost.transfer("token.iost", "admin", "10.00", "");
+		Transaction transaction = iost.transfer("iost", "admin", "10.000", "");
 		String st = transaction.sendTx();		
-		System.out.println(st);
-		
+		System.out.println(st);		
 	} catch (NoSuchAlgorithmException | NoSuchProviderException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
@@ -87,7 +83,8 @@ public static void main(String args[]) {
 			String publisher = "";
 				HTTPProvider provider = new HTTPProvider("http://3.0.192.33:30001/", 21);				
 				IOST iost = new IOST(provider);
-				KeyPair kp = iost.getNewKeyPair();
+				KeyPair kp = iost.getNewKeyPair(Ed25519.ALGORITHMNUM);
+				System.out.println(kp.getId());
 				iost.setPublisher(publisher, kp);
 				Transaction transaction = iost.newAccount("test1", kp.getId(), kp.getId(), 10, 10);
 				String st = transaction.sendTx();
@@ -114,8 +111,6 @@ public static void main(String args[]) {
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}
-					
-			
+			}		
 	}
 }

@@ -110,9 +110,8 @@ public class Ed25519 implements IostAlgo{
 	@Override
 	public Map<String, byte[]> getNewKeyPair()
 			throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
-		TweetNaCl nacl = new TweetNaCl();
-		publicKey = new byte[nacl.SIGN_PUBLIC_KEY_BYTES];
-		privateKey = new byte[nacl.SIGN_SECRET_KEY_BYTES];
+		publicKey = new byte[TweetNaCl.SIGN_PUBLIC_KEY_BYTES];
+		privateKey = new byte[TweetNaCl.SIGN_SECRET_KEY_BYTES];
 		TweetNaCl.crypto_sign_keypair(publicKey, privateKey, false);
 		Map<String, byte[]> map = new HashMap<String, byte[]>();
 		map.put(PublicKey, publicKey);

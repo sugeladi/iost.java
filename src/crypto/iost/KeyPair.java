@@ -1,5 +1,6 @@
 package crypto.iost;
 
+import java.math.BigInteger;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -29,6 +30,12 @@ public class KeyPair {
 	}
 
 	private byte[] privateKey;
+
+	public byte[] getPrivateKey() {
+		System.out.println(Hex.toHexString(privateKey));
+		return privateKey;
+	}
+
 	private IostAlgo iostAlgo;
 
 	public IostAlgo getIostAlgo() {
@@ -55,16 +62,20 @@ public class KeyPair {
 	public KeyPair(short algType) throws NoSuchAlgorithmException, InvalidKeySpecException, NoSuchProviderException,
 			InvalidAlgorithmParameterException {
 		this.algType = algType;
+
 		if (this.algType == Ed25519.ALGORITHMNUM) {
 			iostAlgo = new Ed25519();
+			Map<String, byte[]> map = getNewKeyPair();
+			privateKey = map.get(IostAlgo.PrivateKey);
+			publicKey = map.get(IostAlgo.PublicKey);
 		} else if (this.algType == Secp256k1.ALGORITHMNUM) {
 			iostAlgo = new Secp256k1();
+			Map<String, byte[]> map = getNewKeyPair();
+			setKeysFromRawPrivate(map.get(IostAlgo.PrivateKey));
 		} else {
 			throw new NoSuchAlgorithmException("Invalid Algorithim");
 		}
-		Map<String, byte[]> map = getNewKeyPair();
-		privateKey = map.get(IostAlgo.PrivateKey);
-		publicKey = map.get(IostAlgo.PublicKey);
+
 		setId(getId(publicKey));
 	}
 
@@ -76,8 +87,8 @@ public class KeyPair {
 	 * @throws InvalidKeySpecException
 	 * 
 	 * @constructor
-	 * @Param {Buffer}priKeyBytes - 私钥，可以通过bs58包解析base58字符串获得。
-	 * @Param {number}algType - 秘钥算法，1 = Secp256k1; 2 = Ed25519
+	 * @Param {Byte[]}priKeyBytes - 私钥，可以通过bs58包解析base58字符串获得。
+	 * @Param {short}algType - 秘钥算法，1 = Secp256k1; 2 = Ed25519
 	 */
 	public KeyPair(byte[] privateKey, short algType)
 			throws NoSuchAlgorithmException, InvalidKeySpecException, NoSuchProviderException {
@@ -85,13 +96,20 @@ public class KeyPair {
 		this.algType = algType;
 		if (this.algType == Ed25519.ALGORITHMNUM) {
 			iostAlgo = new Ed25519();
+			this.publicKey = iostAlgo.getPublicKeyFromPrivateKey(privateKey);
 		} else if (this.algType == Secp256k1.ALGORITHMNUM) {
 			iostAlgo = new Secp256k1();
+			setKeysFromRawPrivate(privateKey);
 		} else {
 			throw new NoSuchAlgorithmException("Invalid Algorithim");
 		}
-		this.publicKey = iostAlgo.getPublicKeyFromPrivateKey(privateKey);
 		this.setId(getId(publicKey));
+	}
+
+	private void setKeysFromRawPrivate(byte[] pk)
+			throws NoSuchAlgorithmException, InvalidKeySpecException, NoSuchProviderException {
+		this.publicKey = iostAlgo.getPublicKeyFromPrivateKey(pk);
+		this.privateKey = iostAlgo.getPrivateKey();
 	}
 
 	public String getId(byte[] data) {
@@ -160,9 +178,10 @@ public class KeyPair {
 	 */
 	public byte[] getSignature(byte[] data)
 			throws InvalidKeyException, NoSuchAlgorithmException, NoSuchProviderException, SignatureException {
-		String pk = Hex.toHexString(iostAlgo.getSignature(data, privateKey));
-		pk = Base64.getEncoder().encodeToString(pk.getBytes());
-		return pk.getBytes();
+		String hex = Hex.toHexString(iostAlgo.getSignature(data, privateKey));
+		hex = Base64.getEncoder().encodeToString(hex.getBytes());
+		BigInteger sig = new BigInteger(hex, 16);
+		return sig.toByteArray();
 	}
 
 	/**

@@ -1,12 +1,9 @@
 package crypto;
 
-import java.security.*;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.Random;
-
-import org.bouncycastle.util.encoders.Hex;
-
-import crypto.iost.TransactionObject;
 
 /* Ported from the original C by Ian Preston and Chris Boddy
  * crypto_hash() is ported from TweetNaCl.js
@@ -32,8 +29,18 @@ public class TweetNaCl {
     public static final int HASH_SIZE_BYTES = 64; // SHA-512
     private static final int SECRETBOX_INTERNAL_OVERHEAD_BYTES = 32;
 
-    public static class InvalidSignatureException extends RuntimeException {}
-    public static class InvalidCipherTextException extends RuntimeException {}
+    public static class InvalidSignatureException extends RuntimeException {
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;}
+    public static class InvalidCipherTextException extends RuntimeException {
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;}
 
     public static void crypto_sign_keypair(byte[] pk, byte[] sk, boolean isSeeded)
     {

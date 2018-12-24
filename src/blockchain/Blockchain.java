@@ -100,7 +100,7 @@ public class Blockchain {
      */
     public String getContractStorage(String contractID, String key, String field,Boolean pending) throws IOException {
     	
-    	Map<String, String> map = new HashMap();
+    	Map<String, String> map = new HashMap<String, String>();
     	map.put("id", contractID);
     	map.put("key", key);
     	map.put("field", field);

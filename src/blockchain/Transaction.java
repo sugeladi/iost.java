@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import com.google.gson.Gson;
 
-import crypto.iost.TransactionObject;
+import iost.json.TransactionObject;
 import provider.HTTPProvider;
 
 public class Transaction {
@@ -15,6 +15,16 @@ public class Transaction {
 	 * @param {RPC}rpc - 通过rpc生�?Transaction模�?�
 	 */
 	private HTTPProvider _provider;
+	/**
+	 * @param _provider
+	 * @param tx
+	 */
+	public Transaction(HTTPProvider _provider, TransactionObject tx) {
+		this._provider = _provider;
+		this.tx = tx;
+	}
+
+	private TransactionObject tx;
 
 	public Transaction(HTTPProvider provider) {
 		this._provider = provider;
@@ -28,6 +38,19 @@ public class Transaction {
 	 * @returns {response}
 	 */
 	public String sendTx(TransactionObject tx) throws IOException {
+		String api = "sendTx";
+		String query = new Gson().toJson(tx);
+		return this._provider.sendPost(api, query);
+	}
+	
+	/**
+	 * �?��?交易
+	 * 
+	 * @param {Tx}tx
+	 * @throws IOException
+	 * @returns {response}
+	 */
+	public String sendTx() throws IOException {
 		String api = "sendTx";
 		String query = new Gson().toJson(tx);
 		return this._provider.sendPost(api, query);

@@ -67,12 +67,6 @@ public class Codec {
 		bb = this._escape(bb);
 		this._buf.put(this._sep);
 		this._buf.put(getBytesFromBufferByte(bb));
-		;
-		/*
-		 * ByteBuffer bb = ByteBuffer.wrap(s.getBytes()); bb = this._escape(bb);
-		 * this._buf.put(this._sep); this._buf.put(getBytesFromBufferByte(bb));
-		 */
-		// pushBytes(s.getBytes(), true);
 		return this;
 	}
 
@@ -111,7 +105,7 @@ public class Codec {
 		}
 
 		ByteBuffer buf2 = ByteBuffer.allocate(length * 2);
-		int j = 0;
+		
 		byte[] esc = { 92 };
 		for (int i = 0; i < length; i++) {
 			byte num = buf.get(i);

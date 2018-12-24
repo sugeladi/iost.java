@@ -1,5 +1,6 @@
 package iost;
 
+import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
@@ -8,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import crypto.iost.KeyPair;
-import crypto.iost.TransactionObject;
+import iost.json.TransactionObject;
 
 public class Account {
 	private Map<String, KeyPair> keyPairMap = new HashMap<String, KeyPair>();;
@@ -49,13 +50,13 @@ public class Account {
 	}
 
 	public TransactionObject SignTx(TransactionObject t, String permission)
-			throws InvalidKeyException, NoSuchAlgorithmException, NoSuchProviderException, SignatureException {
+			throws InvalidKeyException, NoSuchAlgorithmException, NoSuchProviderException, SignatureException, UnsupportedEncodingException {
 		t.addSign(this.keyPairMap.get(permission));
 		return t;
 	}
 
 	public TransactionObject PublishTx(TransactionObject t, String permission)
-			throws InvalidKeyException, NoSuchAlgorithmException, NoSuchProviderException, SignatureException {
+			throws InvalidKeyException, NoSuchAlgorithmException, NoSuchProviderException, SignatureException, UnsupportedEncodingException {
 		t.addPublishSign(this.id, keyPairMap.get(permission));
 		return t;
 	}

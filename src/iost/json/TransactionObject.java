@@ -193,7 +193,7 @@ public class TransactionObject {
 			AmountLimitObject alo = iterator3.next();
 			Codec c2 = new Codec();
 			c2.pushString(alo.getToken());
-			c2.pushInt64(alo.getValue());
+			c2.pushString(alo.getSValue());
 			c.pushBytes(c2.getBytes(), false);
 		}
 		c.arrayEnd();

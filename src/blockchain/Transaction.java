@@ -11,64 +11,70 @@ import provider.HTTPProvider;
 
 public class Transaction {
 
-	/**
-	 *
-	 * @Stringructor
-	 * @param {RPC}rpc -
-	 */
-	private HTTPProvider _provider;
+	private HTTPProvider provider;
 
 	/**
-	 * @param _provider
-	 * @param tx
+     * new Transaction with Tx
+	 * @param provider provider used by this transaction holder
+	 * @param tx Tx
 	 */
-	public Transaction(HTTPProvider _provider, TransactionObject tx) {
-		this._provider = _provider;
+	public Transaction(HTTPProvider provider, TransactionObject tx) {
+		this.provider = provider;
 		this.tx = tx;
 	}
 
 	private TransactionObject tx;
 
+    /**
+     * new Transaction without default tx
+     * @param provider provider
+     */
 	public Transaction(HTTPProvider provider) {
-		this._provider = provider;
+		this.provider = provider;
 	}
 
+	class Hash {
+	    String hash;
+    }
+
 	/**
-	 * �?��?交易
-	 * 
-	 * @param {Tx}tx
-	 * @throws IOException
-	 * @returns {response}
+	 * Send a tx
+     *
+	 * @param tx tx tobe sent
+	 * @throws IOException throw while send failed
+     * @return tx hash
 	 */
 	public String sendTx(TransactionObject tx) throws IOException {
+	    Gson gson = new Gson();
 		String api = "sendTx";
-		String query = new Gson().toJson(tx);
-		return this._provider.sendPost(api, query);
+		String query = gson.toJson(tx);
+		String jsonHash = this.provider.sendPost(api, query);
+		Hash hash = gson.fromJson(jsonHash, Hash.class);
+		return hash.hash;
 	}
+
+
 	
 	/**
-	 * �?��?交易
-	 * 
-	 * @param {Tx}tx
-	 * @throws IOException
-	 * @returns {response}
+	 * send default tx
+     *
+	 * @throws IOException -
+	 * @return - tx hash
 	 */
 	public String sendTx() throws IOException {
-		String api = "sendTx";
-		String query = new Gson().toJson(tx);
-		return this._provider.sendPost(api, query);
+		return this.sendTx(this.tx);
 	}
 
 	/**
-	 * 通过交易哈希查询交易
+	 * find tx by tx hash
 	 * 
-	 * @param {string}hash - base58编�?的hash
-	 * @throws IOException
-	 * @returns {promise}
+	 * @param hash - tx hash
+	 * @throws IOException while net error
+	 * @returns tx in json
 	 */
-	public String getTxByHash(String hash) throws IOException {
+	public String getTxByHash(String hash) throws IOException { // todo return a transaction object
 		String api = "getTxByHash/" + hash;
-		return this._provider.sendGet(api);
+		return this.provider.sendGet(api);
 	}
 
 	/**
@@ -80,7 +86,7 @@ public class Transaction {
 	 */
 	public String getTxReceiptByHash(String hash) throws IOException {
 		String api = "getTxReceiptByHash/" + hash;
-		return this._provider.sendGet(api);
+		return this.provider.sendGet(api);
 	}
 
 	/**
@@ -92,7 +98,7 @@ public class Transaction {
 	 */
 	public String getTxReceiptByTxHash(String txHash) throws IOException {
 		String api = "getTxReceiptByTxHash/" + txHash;
-		return this._provider.sendGet(api);
+		return this.provider.sendGet(api);
 	}
 
     public TxReceipt Polling(String hash, long intervalInMillis, int times) throws TimeoutException {
@@ -103,12 +109,15 @@ public class Transaction {
             } catch (IOException e) {
                 try {
                     Thread.sleep(intervalInMillis);
+                    continue;
                 } catch (InterruptedException e1) {
                     e1.printStackTrace();
                 }
             }
+
+            break;
         }
-        if (!resStr.equals("")) {
+        if (resStr.startsWith("{")) {
             return TxReceipt.getTxReceipt(resStr);
         } else {
             throw new TimeoutException();

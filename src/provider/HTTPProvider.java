@@ -12,74 +12,80 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+/**
+ * provider of http, using ok http
+ */
 public class HTTPProvider {
-	private Object _host;
-	private int _timeout;
+	private String host;
+	private int timeout;
 
-	public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
-	public static final MediaType TXT_PLAIN = MediaType.parse("text/plain; charset=utf-8");
+	private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+	private static final MediaType TXT_PLAIN = MediaType.parse("text/plain; charset=utf-8");
 
 	/**
 	 * http接口访问区块链节点
 	 * 
-	 * @constructor
-	 * @param {string} host - IOST节点的URL
-	 * @param {number} timeout - 超时时间，以毫秒计时
+	 * @param host - IOST节点的URL
+	 * @param timeout - 超时时间，以毫秒计时
 	 */
 	public HTTPProvider(String host, int timeout) {
-		this._host = host;
-		this._timeout = timeout;
+		this.host = host;
+		this.timeout = timeout;
 	}
 
-	public int get_timeout() {
-		return _timeout;
+	public int getTimeout() {
+		return timeout;
 	}
 
-	public void set_timeout(int _timeout) {
-		this._timeout = _timeout;
+	public void setTimeout(int timeout) {
+		this.timeout = timeout;
 	}
 
 	/**
-	 * @param {string}url - 节点的API
-	 * @param {string}json - 参数，以json string表示
-	 * @throws IOException
-	 * @returns response body as String
+     * 异步发送post
+     *
+	 * @param url - 节点的API
+	 * @param json - 参数，以json string表示
 	 */
-	public void sendPostAsync(String url, String json, Callback responseCallback) throws IOException {
+	public void sendPostAsync(String url, String json, Callback responseCallback) {
 		OkHttpClient client = new OkHttpClient();
 		RequestBody body = RequestBody.create(TXT_PLAIN, json);
-		Request request = new Request.Builder().url(_host+url).post(body).build();
+		Request request = new Request.Builder().url(host +url).post(body).build();
 		client.newCall(request).enqueue(responseCallback);		
 	}
 	
 	
 	/**
-	 * @param {string}url - 节点的API
-	 * @param {string}json - 参数，以json string表示
-	 * @throws IOException
-	 * @returns response body as String
+     * 同步发送post
+     *
+	 * @param url - 节点的API
+	 * @param json - 参数，以json string表示
+	 * @throws IOException - 发送失败
+	 * @return response body as String
 	 */
 	public String sendPost(String url, String json) throws IOException {
 		OkHttpClient client = new OkHttpClient();
 		JsonParser parser = new JsonParser();
 		JsonElement jsonTree = parser.parse(json);
 		RequestBody body = RequestBody.create(TXT_PLAIN, jsonTree.getAsJsonObject().toString());
-		Request request = new Request.Builder().url(_host+url).header("Connection", "close").post(body).build();
+		Request request = new Request.Builder().url(host +url).header("Connection", "close").post(body).build();
 		Response response = client.newCall(request).execute();
-		return response.body().string();
+        if (response.code() != 200) throw new IOException(response.body().string());
+        return response.body().string();
 	}
 
 	/**
-	 * @param {string}url - 节点的API
-	 * @param {string}json - 参数，以json string表示
-	 * @throws IOException
-	 * @returns response body as String
+     * 同步发送get
+     *
+	 * @param url - 节点的API
+	 * @throws IOException - 失败
+	 * @return response body as String
 	 */
 	public String sendGet(String url) throws IOException {
 		OkHttpClient client = new OkHttpClient();
-		Request request = new Request.Builder().url(_host+url).build();
+		Request request = new Request.Builder().url(host +url).build();
 		Response response = client.newCall(request).execute();
+		if (response.code() != 200) throw new IOException(response.body().string());
 		return response.body().string();
 	}
-
 }

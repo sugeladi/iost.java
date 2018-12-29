@@ -5,6 +5,7 @@ import java.util.concurrent.TimeoutException;
 
 import com.google.gson.Gson;
 
+import io.swagger.client.model.RpcpbTransactionResponseStatus;
 import iost.json.TransactionObject;
 import iost.json.TxReceipt;
 import provider.HTTPProvider;

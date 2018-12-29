@@ -14,7 +14,7 @@ import iost.json.TransactionObject;
 public class Account {
 	private Map<String, KeyPair> keyPairMap = new HashMap<String, KeyPair>();;
 	/**
-	 * @param keyPairMap
+	 * @param keyPair
 	 * @param id
 	 */
 	public Account(String id, KeyPair keyPair) {

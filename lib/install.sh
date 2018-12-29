@@ -1,0 +1,1 @@
+mvn install:install-file -Dfile=./swagger-java-client-1.0.0.jar -DgroupId=io.swagger -DartifactId=swagger-java-client -Dversion=1.0.0 -Dpackaging=jar

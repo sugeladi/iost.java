@@ -12,6 +12,12 @@ public class AmountLimitObject {
         this.v = value;
     }
 
+    public AmountLimitObject(String token, String value) {
+        this.token = token;
+        this.value = value;
+        this.v = -1;
+    }
+
     public String getToken() {
         return token;
     }

@@ -73,12 +73,13 @@ public class IOST {
 	 * @throws UnsupportedEncodingException  -
 	 * @return a Transaction with tx
 	 */
-	public Transaction callABI(String contract, String abi, String[] data) throws InvalidKeyException, NoSuchAlgorithmException, NoSuchProviderException, SignatureException, UnsupportedEncodingException {
+	public Transaction callABI(String contract, String abi, String[] data) throws NoSuchProviderException, NoSuchAlgorithmException, InvalidKeyException, SignatureException {
 		TransactionObject tx = new TransactionObject(this.config.getGasRatio(), this.getConfig().getGasLimit(),
 				this.config.getDelay());
 		ActionObject action = new ActionObject(abi, contract, data);
 		tx.setAction(action);
 		tx.setTime(90, 0);
+		tx.setAmount_limit(new AmountLimitObject("*", "unlimited"));
 		tx.addPublishSign(publisher, key);
 		return new Transaction(provider, tx);
 	}
@@ -107,7 +108,7 @@ public class IOST {
 	 * @throws UnsupportedEncodingException -
 	 * @return - 转账的tx
 	 */
-	public Transaction transfer(String token, String to, String amount, String memo) throws InvalidKeyException, NoSuchAlgorithmException, NoSuchProviderException, SignatureException, UnsupportedEncodingException {
+	public Transaction transfer(String token, String to, String amount, String memo) throws InvalidKeyException, NoSuchAlgorithmException, NoSuchProviderException, SignatureException {
 		String[] data = { token, this.publisher, to, amount, memo };
 		return this.callABI("token.iost", "transfer", data);
 	}
@@ -128,7 +129,7 @@ public class IOST {
 	 * @return {Tx}
 	 */
 	public Transaction newAccount(String name, String ownerkey, String activekey, long initialRAM,
-			double initialGasPledge) throws InvalidKeyException, NoSuchAlgorithmException, NoSuchProviderException, SignatureException, UnsupportedEncodingException {
+			double initialGasPledge) throws InvalidKeyException, NoSuchAlgorithmException, NoSuchProviderException, SignatureException{
 		TransactionObject tx = new TransactionObject(this.config.getGasRatio(), this.getConfig().getGasLimit(),
 				this.config.getDelay());
 		ActionObject action = new ActionObject("SignUp", "auth.iost", name, ownerkey, activekey);

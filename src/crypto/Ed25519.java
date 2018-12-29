@@ -26,128 +26,131 @@ R = P - Q	ge_msub, ge_sub	GroupElement.msub, GroupElement.sub
  */
 
 
-public class Ed25519 implements IostAlgo{
-	public static final String ALGORITHM = "ed25519";
-	public static final Short ALGORITHMNUM = 2;
-	
-	byte[] publicKey;
-	 byte[] privateKey;
-	
-	public byte[] getPublicKey() {
-		return publicKey;
-	}
+public class Ed25519 implements IostAlgo {
+    public static final String ALGORITHM = "ed25519";
+    public static final Short ALGORITHMNUM = 2;
 
-	public void setPublicKey(byte[] publicKey) {
-		this.publicKey = publicKey;
-	}
+    byte[] publicKey;
+    byte[] privateKey;
 
-	public byte[] getPrivateKey() {
-		return privateKey;
-	}
+    public byte[] getPublicKey() {
+        return publicKey;
+    }
 
-	public void setPrivateKey(byte[] privateKey) {
-		this.privateKey = privateKey;
-	}
+    public void setPublicKey(byte[] publicKey) {
+        this.publicKey = publicKey;
+    }
 
-	private native byte[] ExpandPrivateKeyN(byte[] privateKey);
+    public byte[] getPrivateKey() {
+        return privateKey;
+    }
 
-	private native byte[] SignN(byte[] message, byte[] privateKey);
+    public void setPrivateKey(byte[] privateKey) {
+        this.privateKey = privateKey;
+    }
 
-	private native int VerifyN(byte[] message, byte[] signature, byte[] publicKey);
+    private native byte[] ExpandPrivateKeyN(byte[] privateKey);
 
-	public byte[] ExpandPrivateKey(byte[] privateKey) throws InvalidKeySpecException {
-		if ((privateKey.length != 32) && (privateKey.length != 64))
-			throw new InvalidKeySpecException("Invalid privateKey length, 32 bytes please");
-		if (privateKey.length == 64) { // already expanded.
-			return privateKey;
-		}
-		return ExpandPrivateKeyN(privateKey);
-	}
+    private native byte[] SignN(byte[] message, byte[] privateKey);
 
-	public byte[] PublicKeyFromPrivateKey(byte[] privateKey) throws InvalidKeySpecException {
-		if ((privateKey.length != 32) && (privateKey.length != 64))
-			throw new InvalidKeySpecException("Invalid privateKey length, 32 or 64 bytes please");
-		if (privateKey.length == 32) {
-			privateKey = ExpandPrivateKey(privateKey);
-		}
-		return Arrays.copyOfRange(privateKey, privateKey.length/2, privateKey.length);
-	}
+    private native int VerifyN(byte[] message, byte[] signature, byte[] publicKey);
 
-	public byte[] Sign(byte[] message, byte[] privateKey) throws InvalidKeySpecException {
-		if ((privateKey.length != 32) && (privateKey.length != 64))
-			throw new InvalidKeySpecException("Invalid privateKey length, must be 32 or 64 bytes");
-		if (privateKey.length == 32) {
-			privateKey = ExpandPrivateKey(privateKey);
-		}
-		return SignN(message, privateKey);
-	}
+    public byte[] ExpandPrivateKey(byte[] privateKey) throws InvalidKeySpecException {
+        if ((privateKey.length != 32) && (privateKey.length != 64))
+            throw new InvalidKeySpecException("Invalid privateKey length, 32 bytes please");
+        if (privateKey.length == 64) { // already expanded.
+            return privateKey;
+        }
+        return ExpandPrivateKeyN(privateKey);
+    }
 
-	public int Verify(byte[] message, byte[] signature, byte[] publicKey) throws InvalidKeySpecException {
-		if (publicKey.length != 32)
-			throw new InvalidKeySpecException("Invalid publicKey length, must be 32 bytes");
-		if (signature.length != 64)
-			return -1;
-		return VerifyN(message, signature, publicKey);
-	}
+    public byte[] PublicKeyFromPrivateKey(byte[] privateKey) throws InvalidKeySpecException {
+        if ((privateKey.length != 32) && (privateKey.length != 64))
+            throw new InvalidKeySpecException("Invalid privateKey length, 32 or 64 bytes please");
+        if (privateKey.length == 32) {
+            privateKey = ExpandPrivateKey(privateKey);
+        }
+        return Arrays.copyOfRange(privateKey, privateKey.length / 2, privateKey.length);
+    }
 
-	private MessageDigest SHA512_Init() {
-		try {
-			return MessageDigest.getInstance("SHA-512");
-		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
+    public byte[] Sign(byte[] message, byte[] privateKey) throws InvalidKeySpecException {
+        if ((privateKey.length != 32) && (privateKey.length != 64))
+            throw new InvalidKeySpecException("Invalid privateKey length, must be 32 or 64 bytes");
+        if (privateKey.length == 32) {
+            privateKey = ExpandPrivateKey(privateKey);
+        }
+        return SignN(message, privateKey);
+    }
 
-	private void SHA512_Update(MessageDigest md, byte[] data) {
-		md.update(data);
-	}
+    public int Verify(byte[] message, byte[] signature, byte[] publicKey) throws InvalidKeySpecException {
+        if (publicKey.length != 32)
+            throw new InvalidKeySpecException("Invalid publicKey length, must be 32 bytes");
+        if (signature.length != 64)
+            return -1;
+        return VerifyN(message, signature, publicKey);
+    }
 
-	private byte[] SHA512_Final(MessageDigest md) {
-		return md.digest();
-	}
+    private MessageDigest SHA512_Init() {
+        try {
+            return MessageDigest.getInstance("SHA-512");
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
-	@Override
-	public Map<String, byte[]> getNewKeyPair()
-			throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
-		publicKey = new byte[TweetNaCl.SIGN_PUBLIC_KEY_BYTES];
-		privateKey = new byte[TweetNaCl.SIGN_SECRET_KEY_BYTES];
-		TweetNaCl.crypto_sign_keypair(publicKey, privateKey, false);
-		Map<String, byte[]> map = new HashMap<String, byte[]>();
-		map.put(PublicKey, publicKey);
-		map.put(PrivateKey, privateKey);
-		return map;
-	}
+    private void SHA512_Update(MessageDigest md, byte[] data) {
+        md.update(data);
+    }
 
-	@Override
-	public byte[] getPublicKeyFromPrivateKey(byte[] privateKey)
-			throws NoSuchAlgorithmException, InvalidKeySpecException, NoSuchProviderException {
-		if ((privateKey.length != 32) && (privateKey.length != 64))
-			throw new InvalidKeySpecException("Invalid privateKey length, 32 or 64 bytes please");
-		if (privateKey.length == 32) {
-			privateKey = ExpandPrivateKey(privateKey);
-		}
-		this.privateKey = privateKey;
-		this.publicKey = Arrays.copyOfRange(privateKey, 32, 64);
-		return this.publicKey;
-	}
+    private byte[] SHA512_Final(MessageDigest md) {
+        return md.digest();
+    }
 
-	@Override
-	public byte[] getSignature(byte[] data, byte[] privateKey)
-			throws NoSuchAlgorithmException, NoSuchProviderException, InvalidKeyException{
-		return TweetNaCl.crypto_sign(data, privateKey);
-	}
+    @Override
+    public Map<String, byte[]> getNewKeyPair()
+            throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
+        publicKey = new byte[TweetNaCl.SIGN_PUBLIC_KEY_BYTES];
+        privateKey = new byte[TweetNaCl.SIGN_SECRET_KEY_BYTES];
+        TweetNaCl.crypto_sign_keypair(publicKey, privateKey, false);
+        Map<String, byte[]> map = new HashMap<String, byte[]>();
+        map.put(PublicKey, publicKey);
+        map.put(PrivateKey, privateKey);
+        return map;
+    }
 
-	@Override
-	public boolean verifySignature(byte[] data, byte[] signed)
-			throws InvalidKeyException, NoSuchAlgorithmException, NoSuchProviderException {
-		try {
-		TweetNaCl.crypto_sign_open(signed, publicKey);
-        }catch(InvalidSignatureException ise) {return false;}return true;
-	}
+    @Override
+    public byte[] getPublicKeyFromPrivateKey(byte[] privateKey)
+            throws NoSuchAlgorithmException, InvalidKeySpecException, NoSuchProviderException {
+        if ((privateKey.length != 32) && (privateKey.length != 64))
+            throw new InvalidKeySpecException("Invalid privateKey length, 32 or 64 bytes please");
+        if (privateKey.length == 32) {
+            privateKey = ExpandPrivateKey(privateKey);
+        }
+        this.privateKey = privateKey;
+        this.publicKey = Arrays.copyOfRange(privateKey, 32, 64);
+        return this.publicKey;
+    }
 
-	@Override
-	public String getAlgName() {
-		return Ed25519.ALGORITHM;
-	}	
+    @Override
+    public byte[] getSignature(byte[] data, byte[] privateKey)
+            throws NoSuchAlgorithmException, NoSuchProviderException, InvalidKeyException {
+        return TweetNaCl.crypto_sign(data, privateKey);
+    }
+
+    @Override
+    public boolean verifySignature(byte[] data, byte[] signed)
+            throws InvalidKeyException, NoSuchAlgorithmException, NoSuchProviderException {
+        try {
+            TweetNaCl.crypto_sign_open(signed, publicKey);
+        } catch (InvalidSignatureException ise) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String getAlgName() {
+        return Ed25519.ALGORITHM;
+    }
 }

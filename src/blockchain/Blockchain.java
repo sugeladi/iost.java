@@ -11,24 +11,25 @@ import provider.HTTPProvider;
 
 public class Blockchain {
 
-	private HTTPProvider _provider;
+	private HTTPProvider provider;
 	/**
-	 * 区�?�链相关RPC接�?�的实现
-	 * @Stringructor
-	 * @param {RPC}rpc - 通过rpc生�?Blockchain模�?�
+	 * 区块链相关接口
+     *
+	 * @param provider - provider
 	 */
 	
 	public Blockchain(HTTPProvider provider) {
-		this._provider = provider;
+		this.provider = provider;
 	}
 	
 	/**
-     * 获�?�区�?�链整体信�?�
-	 * @throws IOException 
-     * @returns response
+     * 获取区块链信息
+     *
+	 * @throws IOException -
+     * @return ChainInfo in JSON String
      */
     public String getChainInfo() throws IOException {
-        return this._provider.sendGet( "getChainInfo");
+        return this.provider.sendGet( "getChainInfo");
     }
     
     /**
@@ -40,7 +41,7 @@ public class Blockchain {
      */
     public String getBlockByHash(String hash, String complete) throws IOException {
         String api = "getBlockByHash/" + hash + "/" + complete;
-        return this._provider.sendGet( api);
+        return this.provider.sendGet( api);
     }
 	
 
@@ -53,7 +54,7 @@ public class Blockchain {
      */
     public String getBlockByNum(String num,String complete) throws IOException {
         String api = "getBlockByNum/" + num + "/" + complete;
-        return this._provider.sendGet( api);
+        return this.provider.sendGet( api);
     }
     
     /**
@@ -62,7 +63,7 @@ public class Blockchain {
      * @returns {node info} - 当�?节点的信�?�
      */
     public String getNodeInfo() throws IOException {
-        return this._provider.sendGet("getNodeInfo");
+        return this.provider.sendGet("getNodeInfo");
     }
 
     /**
@@ -75,7 +76,7 @@ public class Blockchain {
     public String getBalance(String address, Boolean useLongestChain) throws IOException // TODO 有问题，get token balance
     {
         String api = "getBalance/" + address + "/" + useLongestChain;
-        return this._provider.sendGet( api);
+        return this.provider.sendGet( api);
     }
 
     /**
@@ -86,7 +87,7 @@ public class Blockchain {
      */
     public String getContract(String id) throws IOException {
         String api = "getContract/" + id;
-        return this._provider.sendGet( api);
+        return this.provider.sendGet( api);
     }
 
     /**
@@ -107,7 +108,7 @@ public class Blockchain {
     	map.put("by_longest_chain", pending.toString());
     	String query = new Gson().toJson(map);
         String api = "getContractStorage";
-        return this._provider.sendPost( api, query);
+        return this.provider.sendPost( api, query);
     }
 
     /**
@@ -119,6 +120,7 @@ public class Blockchain {
      */
     public String getAccountInfo(String id,boolean reversible) throws IOException {
         String api = "getAccount/" + id + "/" + (reversible? 1: 0);
-        return this._provider.sendGet( api);
+        return this.provider.sendGet( api);
     }
+
 }

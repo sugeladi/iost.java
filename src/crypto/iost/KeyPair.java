@@ -189,8 +189,7 @@ public class KeyPair {
 	 * @returns Signature
 	 * @exception Invalid Key
 	 */
-	public String getSignatureAsString(byte[] data)
-			throws InvalidKeyException, NoSuchAlgorithmException, NoSuchProviderException, SignatureException {
+	public String getSignatureAsString(byte[] data) throws InvalidKeyException, NoSuchAlgorithmException, NoSuchProviderException, SignatureException {
 		return Base64.getEncoder().encodeToString(iostAlgo.getSignature(data, privateKey));
 
 	}

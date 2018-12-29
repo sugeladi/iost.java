@@ -127,8 +127,7 @@ public class TransactionObject {
 		this.signs.add(Base58.encode(keyPair.getSignature(this.getHash())));
 	}
 
-	public void addPublishSign(String publisher, KeyPair keyPair)
-			throws InvalidKeyException, NoSuchAlgorithmException, NoSuchProviderException, SignatureException {
+	public void addPublishSign(String publisher, KeyPair keyPair) throws NoSuchProviderException, NoSuchAlgorithmException, InvalidKeyException, SignatureException {
 		this.publisher = publisher;
 		PublisherSigsObject obj = new PublisherSigsObject(keyPair.getIostAlgo().getAlgName(), keyPair.B64PubKey(),
 				keyPair.getSignatureAsString(this.getPublishHash()));
@@ -164,18 +163,14 @@ public class TransactionObject {
 		c.pushInt64(this.delay);
 		c.arrayStart();
 
-		
-		Iterator<String> iterator = this.signers.iterator();
-		while (iterator.hasNext()) {
-			c.pushString(iterator.next());
+
+		for (String signer : this.signers) {
+			c.pushString(signer);
 		}
 		c.arrayEnd();
 		c.arrayStart();
 
-		Iterator<ActionObject> iterator2 = this.actions.iterator();
-
-		while (iterator2.hasNext()) {
-			ActionObject act = iterator2.next();
+		for (ActionObject act : this.actions) {
 			Codec c2 = new Codec();
 			c2.pushString(act.getContract());
 			c2.pushString(act.getActionName());
@@ -188,9 +183,7 @@ public class TransactionObject {
 
 		c.arrayEnd();
 		c.arrayStart();
-		Iterator<AmountLimitObject> iterator3 = this.amount_limit.iterator();
-		while (iterator3.hasNext()) {
-			AmountLimitObject alo = iterator3.next();
+		for (AmountLimitObject alo : this.amount_limit) {
 			Codec c2 = new Codec();
 			c2.pushString(alo.getToken());
 			c2.pushString(alo.getSValue());
@@ -200,10 +193,9 @@ public class TransactionObject {
 
 		if (i > 0) {
 			c.arrayStart();
-			Iterator<String> iterator4 = this.signs.iterator();
-			while (iterator4.hasNext()) {
+			for (String sign : this.signs) {
 				Codec c2 = new Codec();
-				c.pushString(iterator4.next());
+				c.pushString(sign);
 				c.pushBytes(c2.getBytes(), false);
 			}
 			c.arrayEnd();

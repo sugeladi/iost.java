@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 
 public class ActionObject {
 
-    private String contract, actionName;
+    private String contract, action_name;
     private String data;
 
     public String getContract() {
@@ -16,11 +16,11 @@ public class ActionObject {
     }
 
     public String getActionName() {
-        return actionName;
+        return action_name;
     }
 
     public void setActionName(String actionName) {
-        this.actionName = actionName;
+        this.action_name = actionName;
     }
 
     public String getData() {
@@ -37,12 +37,12 @@ public class ActionObject {
     }
 
     /**
-     * @param actionName -
+     * @param action_name -
      * @param contract   -
      * @param data       -
      */
     public ActionObject(String actionName, String contract, Object... data) {
-        this.actionName = actionName;
+        this.action_name = actionName;
         this.contract = contract;
         this.data = getJson(data);
     }

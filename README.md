@@ -16,11 +16,18 @@ mvn package
 
 // use Blockchain
 
-	HTTPProvider provider = new HTTPProvider("http://127.0.0.1:30001/", 21);
+	HTTPProvider provider = new HTTPProvider("http://127.0.0.1:30001/", 21, 500, 3)
 		Blockchain blockchain = new Blockchain(provider);
 		try {
-			String json = blockchain.getChainInfo();
-			System.out.println(json);
+			NodeInfo info = api.getNodeInfoObject(500, 2);
+			System.out.println(info.getGitHash());
+			System.out.println(info.getNetwork().getId());
+			ChainInfo chain = api.getChainInfoObject(500, 2);
+			System.out.println(chain.getLibBlockHash());
+			System.out.println(chain.getHeadBlockHash());
+			GasRatio gasR = api.getGasRatioObject(500, 3);
+			System.out.println(gasR.getLowestGasRatio());
+			System.out.println(gasR.getMedianGasRatio());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -30,7 +37,7 @@ mvn package
 // use create a new account
 
   // Create HTTPProvider Object
-HTTPProvider provider = new HTTPProvider("http://127.0.0.1:30001/", 21);				
+HTTPProvider provider = new HTTPProvider("http://127.0.0.1:30001/", 21, 500, 3);				
 				
 	// Create IOST Object from HTTPProvider			
 				
@@ -43,14 +50,13 @@ HTTPProvider provider = new HTTPProvider("http://127.0.0.1:30001/", 21);
 	iost.setPublisher(publisher, kp);
 	
 	// Creating Transaction Object
-Transaction transaction = iost.newAccount("test1", kp.getId(), kp.getId(), 10, 10);
+TransactionObject transactionObj = iost.newAccount("test1", kp.getId(), kp.getId(), 10, 10);
 				
 	
 	// Executing transaction
-	String json = transaction.sendTx();
-	
-	// Populating ResponseHash from response
-	ResponseHash resp = ResponseHash.getResponseHash(json);		
+	Transaction transaction = new Transaction(provider, transactionObj);
+		TxReceipt receipt = transaction.sendTx();		
+		System.out.println(receipt.getMessage());		
 			
 		
 // 	use transfer 
@@ -68,18 +74,16 @@ HTTPProvider provider = new HTTPProvider("http://127.0.0.1:30001/", 21);
 	iost.setPublisher(publisher, kp);
 	
 	// Create a Transaction using IOST	callABI method
-	Transaction t = iost.callABI("token.iost", "transfer", data);
+	TransactionObject transactionObj = iost.callABI("token.iost", "transfer", data);
 				
 				OR
 	   
 	// Create a Transaction using IOST transfer method	
-	Transaction t = iost.transfer("token.iost", "admin", "10.00", "memo");
+	TransactionObject transactionObj = iost.transfer("token.iost", "admin", "10.00", "memo");
 			
-	// Executing transaction
-	String json = transaction.sendTx();
-	
-	// Getting ResponseHash Object
-	ResponseHash resp = ResponseHash.getResponseHash(json);
+	Transaction transaction = new Transaction(provider, transactionObj);
+	TxReceipt receipt = transaction.sendTx();		
+	System.out.println(receipt.getMessage());
 		
 
 ## APIs

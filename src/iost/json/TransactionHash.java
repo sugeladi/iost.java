@@ -2,16 +2,16 @@ package iost.json;
 
 import com.google.gson.Gson;
 
-public class ResponseHash {
+public class TransactionHash {
 	private String hash;
 
-	public ResponseHash() {
+	public TransactionHash() {
 		super();
 	}
 	
-	public static ResponseHash getResponseHash(String jsonResponse){
+	public static TransactionHash getResponseHash(String jsonResponse){
 		Gson gson = new Gson();
-		return gson.fromJson(jsonResponse, ResponseHash.class);
+		return gson.fromJson(jsonResponse, TransactionHash.class);
 		
 	}
 	

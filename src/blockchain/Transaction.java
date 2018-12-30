@@ -16,17 +16,17 @@ public class Transaction {
 	/**
      * new Transaction with Tx
 	 * @param provider provider used by this transaction holder
-	 * @param tx Tx
+	 * @param transactionObject Tx
 	 */
-	public Transaction(HTTPProvider provider, TransactionObject tx) {
+	public Transaction(HTTPProvider provider, TransactionObject transactionObj) {
 		this.provider = provider;
-		this.tx = tx;
+		this.transactionObject = transactionObj;
 	}
 
-	private TransactionObject tx;
+	private TransactionObject transactionObject;
 
     /**
-     * new Transaction without default tx
+     * new Transaction without default transactionObject
      * @param provider provider
      */
 	public Transaction(HTTPProvider provider) {
@@ -38,39 +38,41 @@ public class Transaction {
     }
 
 	/**
-	 * Send a tx
+	 * Send a transactionObject
      *
-	 * @param tx tx tobe sent
+	 * @param transactionObject transactionObject tobe sent
 	 * @throws IOException throw while send failed
-     * @return tx hash
+     * @return transactionObject hash
+	 * @throws TimeoutException 
 	 */
-	public String sendTx(TransactionObject tx) throws IOException {
+	public TxReceipt sendTx(TransactionObject tx) throws IOException, TimeoutException {
 	    Gson gson = new Gson();
 		String api = "sendTx";
 		String query = gson.toJson(tx);
 		String jsonHash = this.provider.sendPost(api, query);
 		Hash hash = gson.fromJson(jsonHash, Hash.class);
-		return hash.hash;
+		return Polling(hash.hash, provider.getIntervalInMillis(), provider.getTimes());
 	}
 
 
 	
 	/**
-	 * send default tx
+	 * send default transactionObject
      *
 	 * @throws IOException -
-	 * @return - tx hash
+	 * @return - transactionObject hash
+	 * @throws TimeoutException 
 	 */
-	public String sendTx() throws IOException {
-		return this.sendTx(this.tx);
+	public TxReceipt sendTx() throws IOException, TimeoutException {
+		return this.sendTx(this.transactionObject);
 	}
 
 	/**
-	 * find tx by tx hash
+	 * find transactionObject by transactionObject hash
 	 * 
-	 * @param hash - tx hash
+	 * @param hash - transactionObject hash
 	 * @throws IOException while net error
-	 * @returns tx in json
+	 * @returns transactionObject in json
 	 */
 	public String getTxByHash(String hash) throws IOException { // todo return a transaction object
 		String api = "getTxByHash/" + hash;

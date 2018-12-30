@@ -18,19 +18,53 @@ import okhttp3.Response;
 public class HTTPProvider {
 	private String host;
 	private int timeout;
+	private long intervalInMillis;
+	/**
+	 * @return the intervalInMillis
+	 */
+	public long getIntervalInMillis() {
+		return intervalInMillis;
+	}
+
+	/**
+	 * @param intervalInMillis the intervalInMillis to set
+	 */
+	public void setIntervalInMillis(long intervalInMillis) {
+		this.intervalInMillis = intervalInMillis;
+	}
+
+	/**
+	 * @return the times
+	 */
+	public int getTimes() {
+		return times;
+	}
+
+	/**
+	 * @param times the times to set
+	 */
+	public void setTimes(int times) {
+		this.times = times;
+	}
+
+	private int times;
 
 	private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 	private static final MediaType TXT_PLAIN = MediaType.parse("text/plain; charset=utf-8");
 
+	
+
 	/**
-	 * http接口访问区块链节点
-	 * 
-	 * @param host - IOST节点的URL
-	 * @param timeout - 超时时间，以毫秒计时
+	 * @param host
+	 * @param timeout
+	 * @param intervalInMillis
+	 * @param times
 	 */
-	public HTTPProvider(String host, int timeout) {
+	public HTTPProvider(String host, int timeout, long intervalInMillis, int times) {
 		this.host = host;
 		this.timeout = timeout;
+		this.intervalInMillis = intervalInMillis;
+		this.times = times;
 	}
 
 	public int getTimeout() {

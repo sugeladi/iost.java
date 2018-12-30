@@ -73,14 +73,14 @@ public class IOST {
 	 * @throws UnsupportedEncodingException  -
 	 * @return a Transaction with tx
 	 */
-	public Transaction callABI(String contract, String abi, String[] data) throws InvalidKeyException, NoSuchAlgorithmException, NoSuchProviderException, SignatureException, UnsupportedEncodingException {
+	public TransactionObject callABI(String contract, String abi, String[] data) throws InvalidKeyException, NoSuchAlgorithmException, NoSuchProviderException, SignatureException, UnsupportedEncodingException {
 		TransactionObject tx = new TransactionObject(this.config.getGasRatio(), this.getConfig().getGasLimit(),
 				this.config.getDelay());
 		ActionObject action = new ActionObject(abi, contract, data);
 		tx.setAction(action);
 		tx.setTime(90, 0);
 		tx.addPublishSign(publisher, key);
-		return new Transaction(provider, tx);
+		return tx;
 	}
 	
 	 /**
@@ -107,7 +107,7 @@ public class IOST {
 	 * @throws UnsupportedEncodingException -
 	 * @return - 转账的tx
 	 */
-	public Transaction transfer(String token, String to, String amount, String memo) throws InvalidKeyException, NoSuchAlgorithmException, NoSuchProviderException, SignatureException, UnsupportedEncodingException {
+	public TransactionObject transfer(String token, String to, String amount, String memo) throws InvalidKeyException, NoSuchAlgorithmException, NoSuchProviderException, SignatureException, UnsupportedEncodingException {
 		String[] data = { token, this.publisher, to, amount, memo };
 		return this.callABI("token.iost", "transfer", data);
 	}
@@ -127,7 +127,7 @@ public class IOST {
 	 * @throws UnsupportedEncodingException -
 	 * @return {Tx}
 	 */
-	public Transaction newAccount(String name, String ownerkey, String activekey, long initialRAM,
+	public TransactionObject newAccount(String name, String ownerkey, String activekey, long initialRAM,
 			double initialGasPledge) throws InvalidKeyException, NoSuchAlgorithmException, NoSuchProviderException, SignatureException, UnsupportedEncodingException {
 		TransactionObject tx = new TransactionObject(this.config.getGasRatio(), this.getConfig().getGasLimit(),
 				this.config.getDelay());
@@ -140,7 +140,7 @@ public class IOST {
 		tx.setTime(90, 0);
 		tx.setAmount_limit(new AmountLimitObject("*", 1000000));
 		tx.addPublishSign(publisher, key);
-		return new Transaction(provider, tx);
+		return tx;
 	}
 
 	/**

@@ -22,18 +22,24 @@ import crypto.iost.Utils;
 
 public class TransactionObject {
 
-	private long gasRatio = 0, gasLimit = 0, time = 0, expiration = 0, delay = 0;
+	private long gas_ratio = 0, gas_limit = 0, time = 0, expiration = 0, delay = 0;
 	private List<String> signs = new ArrayList<String>();
 	private List<ActionObject> actions = new ArrayList<ActionObject>();
 	private List<PublisherSigsObject> publisher_sigs = new ArrayList<PublisherSigsObject>();
 	private List<String> signers = new ArrayList<String>();
 	private List<AmountLimitObject> amount_limit = new ArrayList<AmountLimitObject>();
 	private String publisher;
+	private TxReceipt tx_receipt;
+	private String hash;
+	
+	public String getTxHash() {
+		return hash;
+	}
 
 	public TransactionObject(long gasRatio, long gasLimit, long delay) {
 		super();
-		this.gasRatio = gasRatio;
-		this.gasLimit = gasLimit;
+		this.gas_ratio = gasRatio;
+		this.gas_limit = gasLimit;
 		this.delay = delay;
 		this.publisher = "";
 	}
@@ -66,7 +72,7 @@ public class TransactionObject {
 	}
 
 	public long getGasRatio() {
-		return gasRatio;
+		return gas_ratio;
 	}
 
 	public byte[] getHash() {
@@ -83,15 +89,15 @@ public class TransactionObject {
 	}
 
 	public void setGasRatio(long gasRatio) {
-		this.gasRatio = gasRatio;
+		this.gas_ratio = gasRatio;
 	}
 
 	public long getGasLimit() {
-		return gasLimit;
+		return gas_limit;
 	}
 
 	public void setGasLimit(long gasLimit) {
-		this.gasLimit = gasLimit;
+		this.gas_limit = gasLimit;
 	}
 
 	public List<AmountLimitObject> getAmount_limit() {
@@ -159,8 +165,8 @@ public class TransactionObject {
 		Codec c = new Codec();
 		c.pushInt64(this.time);
 		c.pushInt64(this.expiration);
-		c.pushInt64(this.gasRatio*100);
-		c.pushInt64(this.gasLimit*100);
+		c.pushInt64(this.gas_ratio*100);
+		c.pushInt64(this.gas_limit*100);
 		c.pushInt64(this.delay);
 		c.arrayStart();
 
@@ -214,6 +220,20 @@ public class TransactionObject {
 		}
 
 		return c.getBytes();
+	}
+
+	/**
+	 * @return the tx_receipt
+	 */
+	public TxReceipt getTx_receipt() {
+		return tx_receipt;
+	}
+
+	/**
+	 * @param tx_receipt the tx_receipt to set
+	 */
+	public void setTx_receipt(TxReceipt tx_receipt) {
+		this.tx_receipt = tx_receipt;
 	}
 
 

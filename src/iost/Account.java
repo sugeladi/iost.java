@@ -12,25 +12,22 @@ import crypto.iost.KeyPair;
 import iost.json.TransactionObject;
 
 public class Account {
-	private Map<String, KeyPair> keyPairMap = new HashMap<String, KeyPair>();;
+	private Map<String, KeyPair> keyPairMap;
 	/**
 	 * @param keyPairMap
 	 * @param id
 	 */
-	public Account(String id, KeyPair keyPair) {
-		super();
-		this.id = id;
-		setKeyPairMap("active", keyPair);
-	}
-
-	private Map<String, String> keyId = new HashMap<String, String>();;
-	private String id;
-
 	public Account(String id) {
 		super();
 		this.id = id;
+		keyId = new HashMap<String, String>();
+		keyPairMap = new HashMap<String, KeyPair>();
 	}
 
+	private Map<String, String> keyId;
+	private String id;
+
+	
 	public String getId() {
 		return id;
 	}
@@ -42,22 +39,22 @@ public class Account {
 		return keyPairMap;
 	}
 
-	public void setKeyPairMap(String permission, KeyPair keyPair) {
+	public void addKeyPair(KeyPair keyPair, String permission) {
 		if (permission == "") {
 			permission = this.keyId.get(keyPair.getId());
 		}
 		this.keyPairMap.put(permission, keyPair);
 	}
 
-	public TransactionObject SignTx(TransactionObject t, String permission)
+	public TransactionObject sign(TransactionObject t, String permission)
 			throws InvalidKeyException, NoSuchAlgorithmException, NoSuchProviderException, SignatureException, UnsupportedEncodingException {
 		t.addSign(this.keyPairMap.get(permission));
 		return t;
 	}
 
-	public TransactionObject PublishTx(TransactionObject t, String permission)
+	public TransactionObject signTx(TransactionObject t)
 			throws InvalidKeyException, NoSuchAlgorithmException, NoSuchProviderException, SignatureException, UnsupportedEncodingException {
-		t.addPublishSign(this.id, keyPairMap.get(permission));
+		t.addPublishSign(this.id, keyPairMap.get("active"));
 		return t;
 	}
 

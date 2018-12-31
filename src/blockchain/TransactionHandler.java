@@ -9,16 +9,16 @@ import iost.json.TransactionObject;
 import iost.json.TxReceipt;
 import provider.HTTPProvider;
 
-public class Transaction {
+public class TransactionHandler {
 
 	private HTTPProvider provider;
 
 	/**
-     * new Transaction with Tx
+     * new TransactionHandler with Tx
 	 * @param provider provider used by this transaction holder
 	 * @param transactionObject Tx
 	 */
-	public Transaction(HTTPProvider provider, TransactionObject transactionObj) {
+	public TransactionHandler(HTTPProvider provider, TransactionObject transactionObj) {
 		this.provider = provider;
 		this.transactionObject = transactionObj;
 	}
@@ -26,10 +26,10 @@ public class Transaction {
 	private TransactionObject transactionObject;
 
     /**
-     * new Transaction without default transactionObject
+     * new TransactionHandler without default transactionObject
      * @param provider provider
      */
-	public Transaction(HTTPProvider provider) {
+	public TransactionHandler(HTTPProvider provider) {
 		this.provider = provider;
 	}
 

@@ -13,11 +13,67 @@ mvn package
 
 ## Usage
 ```
+		
+## Creating a new account
 
-// use Blockchain
+  // Create HTTPProvider Object
+HTTPProvider provider = new HTTPProvider("http://127.0.0.1:30001/", 21, 500, 3);				
+				
+	// Create a confiuartion.
+	Config config = new Config();
+				
+	// Create IOST Object from Config and HTTPProvider			
+				
+	IOST iost = new IOST(config, provider);		
+	
+	// init account
+	Account account = new Account("account_name");	
 
-	HTTPProvider provider = new HTTPProvider("http://127.0.0.1:30001/", 21, 500, 3)
-		Blockchain blockchain = new Blockchain(provider);
+	KeyPair kp = new KeyPair(
+					Base58.decode(
+							"Your Base58 encoded private keys"),
+					Ed25519.ALGORITHMNUM);
+		//Add keyPair to the account
+			account.addKeyPair(kp, "owner");
+			account.addKeyPair(kp, "active");
+			
+	// Generate a new KeyPair for new accountTransactionObject 
+	KeyPair kp = new KeyPair(Ed25519.ALGORITHMNUM);
+	
+	
+	// Initiating Transaction Object
+	TransactionObject transactionObject = iost.newAccount("test1", "admin", newKP.getId(), newKP.getId(), 1024, 10);
+	
+	// Signing transaction object
+	transactionObject = account.signTx(transactionObject);
+				
+	
+	// Initiating transaction handler
+		TransactionHandler transactionHandler = new TransactionHandler(provider, transactionObj);
+	
+	// sending transaction and getting receipt 
+		TxReceipt receipt = transaction.sendTx();		
+			
+		
+## TRANSFER 
+
+
+	// Create a Transaction using IOST transfer method	
+	TransactionObject transactionObj = iost.transfer("iost", "admin", "admin", "10.000", "");
+	
+	// Signing transaction object
+	transactionObj = account.signTx(transactionObj);
+			
+	TransactionHandler transactionHandler = new TransactionHandler(provider, transactionObj);
+	
+	TxReceipt receipt = transactionHandler.sendTx();
+		
+
+## APIs
+
+
+HTTPProvider provider = new HTTPProvider("http://127.0.0.1:30001/", 21, 500, 3)
+	Api api = new Api(provider);
 		try {
 			NodeInfo info = api.getNodeInfoObject(500, 2);
 			System.out.println(info.getGitHash());
@@ -33,59 +89,3 @@ mvn package
 			e.printStackTrace();
 		}
 		
-		
-// use create a new account
-
-  // Create HTTPProvider Object
-HTTPProvider provider = new HTTPProvider("http://127.0.0.1:30001/", 21, 500, 3);				
-				
-	// Create IOST Object from HTTPProvider			
-				
-	IOST iost = new IOST(provider);			
-
-	// Generate a new KeyPair
-	KeyPair kp = iost.getNewKeyPair();
-	
-	// Set publisher name and keyPair for IOST object
-	iost.setPublisher(publisher, kp);
-	
-	// Creating Transaction Object
-TransactionObject transactionObj = iost.newAccount("test1", kp.getId(), kp.getId(), 10, 10);
-				
-	
-	// Executing transaction
-	Transaction transaction = new Transaction(provider, transactionObj);
-		TxReceipt receipt = transaction.sendTx();		
-		System.out.println(receipt.getMessage());		
-			
-		
-// 	use transfer 
-	  // Create HTTPProvider Object
-HTTPProvider provider = new HTTPProvider("http://127.0.0.1:30001/", 21);				
-				
-	// Create IOST Object from HTTPProvider			
-				
-	IOST iost = new IOST(provider);			
-
-	// Generate a new KeyPair
-	KeyPair kp = iost.getNewKeyPair();
-	
-	// Set publisher name and keyPair for IOST object
-	iost.setPublisher(publisher, kp);
-	
-	// Create a Transaction using IOST	callABI method
-	TransactionObject transactionObj = iost.callABI("token.iost", "transfer", data);
-				
-				OR
-	   
-	// Create a Transaction using IOST transfer method	
-	TransactionObject transactionObj = iost.transfer("token.iost", "admin", "10.00", "memo");
-			
-	Transaction transaction = new Transaction(provider, transactionObj);
-	TxReceipt receipt = transaction.sendTx();		
-	System.out.println(receipt.getMessage());
-		
-
-## APIs
-
-

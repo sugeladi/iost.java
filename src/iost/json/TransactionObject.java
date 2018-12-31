@@ -32,6 +32,10 @@ public class TransactionObject {
 	private TxReceipt tx_receipt;
 	private String hash;
 	
+	public void addApprove(String token, String value) {
+        setAmount_limit(new AmountLimitObject(token, value));
+    }
+	
 	public String getTxHash() {
 		return hash;
 	}
@@ -199,7 +203,7 @@ public class TransactionObject {
 			AmountLimitObject alo = iterator3.next();
 			Codec c2 = new Codec();
 			c2.pushString(alo.getToken());
-			c2.pushString(alo.getSValue());
+			c2.pushString(alo.getValue());
 			c.pushBytes(c2.getBytes(), false);
 		}
 		c.arrayEnd();

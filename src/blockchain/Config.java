@@ -2,21 +2,62 @@ package blockchain;
 
 public class Config {
 
-	private long gasRatio, gasLimit, delay;
-
-	public Config() {
-		super();
-		this.gasRatio = 1;
-		this.gasLimit = 100000;
-		this.delay = 0;
-	}
-
-	public Config(long gasRatio, long gasLimit, long delay) {
-		super();
+	private long gasRatio, gasLimit, delay,expiration;
+	/**
+	 * @param gasRatio
+	 * @param gasLimit
+	 * @param delay
+	 * @param expiration
+	 * @param defaultLimit
+	 */
+	public Config(long gasRatio, long gasLimit, long delay, long expiration, String defaultLimit) {
 		this.gasRatio = gasRatio;
 		this.gasLimit = gasLimit;
 		this.delay = delay;
+		this.expiration = expiration;
+		this.defaultLimit = defaultLimit;
 	}
+
+	private String defaultLimit;
+
+	/**
+	 * @return the expiration
+	 */
+	public long getExpiration() {
+		return expiration;
+	}
+
+	/**
+	 * @param expiration the expiration to set
+	 */
+	public void setExpiration(long expiration) {
+		this.expiration = expiration;
+	}
+
+	/**
+	 * @return the defaultLimit
+	 */
+	public String getDefaultLimit() {
+		return defaultLimit;
+	}
+
+	/**
+	 * @param defaultLimit the defaultLimit to set
+	 */
+	public void setDefaultLimit(String defaultLimit) {
+		this.defaultLimit = defaultLimit;
+	}
+
+	public Config() {
+		super();
+		gasRatio = 1;
+		gasLimit = 100000;
+		delay = 0;
+		defaultLimit = "unlimited";
+		expiration = 90;
+	}
+
+
 
 	public long getGasRatio() {
 		return gasRatio;

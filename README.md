@@ -73,15 +73,15 @@ HTTPProvider provider = new HTTPProvider("http://127.0.0.1:30001/", 21);
 
 
 HTTPProvider provider = new HTTPProvider("http://127.0.0.1:30001/", 21, 500, 3)
-	Api api = new Api(provider);
+	BlockChain blockchain = new BlockChain(provider);
 		try {
-			NodeInfo info = api.getNodeInfoObject(500, 2);
+			NodeInfo info = blockchain.getNodeInfoObject(500, 2);
 			System.out.println(info.getGitHash());
 			System.out.println(info.getNetwork().getId());
-			ChainInfo chain = api.getChainInfoObject(500, 2);
+			ChainInfo chain = blockchain.getChainInfoObject(500, 2);
 			System.out.println(chain.getLibBlockHash());
 			System.out.println(chain.getHeadBlockHash());
-			GasRatio gasR = api.getGasRatioObject(500, 3);
+			GasRatio gasR = blockchain.getGasRatioObject(500, 3);
 			System.out.println(gasR.getLowestGasRatio());
 			System.out.println(gasR.getMedianGasRatio());
 		} catch (IOException e) {

@@ -13,6 +13,14 @@ import provider.HTTPProvider;
 public class TransactionHandler {
 
 	private HTTPProvider provider;
+	/**
+	 * @param provider
+	 */
+	public TransactionHandler(HTTPProvider provider) {
+		this.provider = provider;
+	}
+
+
 	private long intervalInMillis;
 	private int retries;
 

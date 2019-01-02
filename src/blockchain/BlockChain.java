@@ -7,17 +7,17 @@ import iost.json.Account;
 import iost.json.BlockFromApi;
 import iost.json.ChainInfo;
 import iost.json.Contract;
-import iost.json.ContractStorage;
 import iost.json.ContractStorageData;
 import iost.json.GasRatio;
 import iost.json.NodeInfo;
 import iost.json.RamInfo;
+import iost.json.Token721Metadata;
 import iost.json.TokenBalance;
 import provider.HTTPProvider;
 
-public class Api extends Blockchain {
+public class BlockChain extends BaseBlockChain {
 
-	public Api(HTTPProvider provider) {
+	public BlockChain(HTTPProvider provider) {
 		super(provider);
 	}
 
@@ -25,7 +25,8 @@ public class Api extends Blockchain {
 		String resStr = "";
 		for (int i = 0; i < times; i++) {
 			try {
-				resStr = this.getNodeInfo();
+				Net net = new Net(this.get_provider());
+				resStr = net.getNodeInfo();
 			} catch (IOException e) {
 				try {
 					Thread.sleep(intervalInMillis);
@@ -185,12 +186,12 @@ public class Api extends Blockchain {
 		}
 	}
 
-	public TokenBalance getTokenBalance(String account, String token, String byLongestChain, long intervalInMillis,
+	public TokenBalance getBalance(String account, String token, String byLongestChain, long intervalInMillis,
 			int times) throws TimeoutException {
 		String resStr = "";
 		for (int i = 0; i < times; i++) {
 			try {
-				resStr = super.getTokenBalance(account, token, byLongestChain);
+				resStr = super.getBalance(account, token, byLongestChain);
 			} catch (IOException e) {
 				try {
 					Thread.sleep(intervalInMillis);
@@ -204,6 +205,54 @@ public class Api extends Blockchain {
 		}
 		if (resStr.startsWith("{")) {
 			return TokenBalance.getTokenBalance(resStr);
+		} else {
+			throw new TimeoutException();
+		}
+	}
+	
+	public TokenBalance getToken721Balance(String account, String token, boolean byLongestChain, long intervalInMillis,
+			int times) throws TimeoutException {
+		String resStr = "";
+		for (int i = 0; i < times; i++) {
+			try {
+				resStr = super.getToken721Balance(account, token, byLongestChain);
+			} catch (IOException e) {
+				try {
+					Thread.sleep(intervalInMillis);
+					continue;
+				} catch (InterruptedException e1) {
+					e1.printStackTrace();
+				}
+			}
+
+			break;
+		}
+		if (resStr.startsWith("{")) {
+			return TokenBalance.getTokenBalance(resStr);
+		} else {
+			throw new TimeoutException();
+		}
+	}
+	
+	public Token721Metadata getToken721Metadata(String account, String token, boolean byLongestChain, long intervalInMillis,
+			int times) throws TimeoutException {
+		String resStr = "";
+		for (int i = 0; i < times; i++) {
+			try {
+				resStr = super.getToken721Metadata(account, token, byLongestChain);
+			} catch (IOException e) {
+				try {
+					Thread.sleep(intervalInMillis);
+					continue;
+				} catch (InterruptedException e1) {
+					e1.printStackTrace();
+				}
+			}
+
+			break;
+		}
+		if (resStr.startsWith("{")) {
+			return Token721Metadata.getToken721Metadata(resStr);
 		} else {
 			throw new TimeoutException();
 		}

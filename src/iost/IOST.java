@@ -139,7 +139,7 @@ public class IOST {
 		ActionObject action3 = new ActionObject("pledge", "gas.iost", this.publisher, name, String.valueOf(initialGasPledge));
 		tx.setAction(action3);
 		tx.setTime(90, 0);
-		tx.setAmount_limit(new AmountLimitObject("*", 1000000));
+		tx.setAmount_limit(new AmountLimitObject("*", "unlimited"));
 		tx.addPublishSign(publisher, key);
 		return new Transaction(provider, tx);
 	}

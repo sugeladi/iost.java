@@ -30,23 +30,13 @@ public class IOST {
 		this.provider = provider;
 	}
 
-	/**
-	 * new iost with default config
-	 *
-	 * @param provider - network provider
-	 */
-	public IOST(HTTPProvider provider) {
-		this.setConfig(new Config());
-		this.provider = provider;
-	}
 
 	/**
 	 * constructor with config settings
-	 *
+	 * @param defaultLimit is Amount Limit
 	 *
 	 */
 	public IOST(long gasRatio, long gasLimit, long delay, long expiration, String defaultLimit, HTTPProvider provider) {
-		super();
 		config = new Config(gasRatio, gasLimit, delay, expiration, defaultLimit);
 		this.provider = provider;
 	}
@@ -70,11 +60,10 @@ public class IOST {
 	 * @re.lo[jiojturn a TransactionObject
 	 */
 	public TransactionObject callABI(String contract, String abi, Object... data) throws InvalidKeyException, NoSuchAlgorithmException, NoSuchProviderException, SignatureException, UnsupportedEncodingException {
-		TransactionObject t = new TransactionObject(this.config.getGasRatio(), this.getConfig().getGasLimit(),
-				this.config.getDelay());
+		TransactionObject t = new TransactionObject(this.config.getGasRatio(), this.getConfig().getGasLimit());
 		ActionObject action = new ActionObject(abi, contract, data);
 		t.setAction(action);
-		t.setTime(90, 0);
+		t.setTime(this.config.getExpiration(), this.getConfig().getDelay());
 		t.addApprove("*", this.config.getDefaultLimit());
 		return t;
 	}
@@ -97,7 +86,7 @@ public class IOST {
 	 */
 	public TransactionObject transfer(String token,String from, String to, String amount, String memo) throws InvalidKeyException, NoSuchAlgorithmException, NoSuchProviderException, SignatureException, UnsupportedEncodingException {
 		TransactionObject t =this.callABI("token.iost", "transfer", token, from, to, amount, memo);
-		t.addApprove("*", this.config.getDefaultLimit());
+	//	t.addApprove("*", this.config.getAmountLimit());
         t.addApprove("iost", amount);
         return t;
 	}
@@ -119,15 +108,14 @@ public class IOST {
 	 */
 	public TransactionObject newAccount(String name, String creator, String ownerkey, String activekey, long initialRAM,
 			double initialGasPledge) throws InvalidKeyException, NoSuchAlgorithmException, NoSuchProviderException, SignatureException, UnsupportedEncodingException {
-		TransactionObject t = new TransactionObject(this.config.getGasRatio(), this.getConfig().getGasLimit(),
-				this.config.getDelay());
+		TransactionObject t = new TransactionObject(this.config.getGasRatio(), this.getConfig().getGasLimit());
 		ActionObject action = new ActionObject("SignUp", "auth.iost", name, ownerkey, activekey);
 		t.setAction(action);
 		ActionObject action2 = new ActionObject("buy", "ram.iost", creator, name, initialRAM);
 		t.setAction(action2);
 		ActionObject action3 = new ActionObject("pledge", "gas.iost", creator, name, String.valueOf(initialGasPledge));
 		t.setAction(action3);
-		t.setTime(this.config.getExpiration(), this.config.getDelay());
+		t.setTime(this.config.getExpiration(), 30);
 		t.addApprove("*", this.config.getDefaultLimit());
 		return t;
 	}

@@ -51,7 +51,7 @@ public class Config {
 	public Config() {
 		super();
 		gasRatio = 1;
-		gasLimit = 100000;
+		gasLimit = 2000000;
 		delay = 0;
 		defaultLimit = "unlimited";
 		expiration = 90;

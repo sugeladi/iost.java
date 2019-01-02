@@ -5,6 +5,7 @@ import java.util.concurrent.TimeoutException;
 
 import com.google.gson.Gson;
 
+import iost.json.TransactionHash;
 import iost.json.TransactionObject;
 import iost.json.TxReceipt;
 import provider.HTTPProvider;
@@ -12,30 +13,64 @@ import provider.HTTPProvider;
 public class TransactionHandler {
 
 	private HTTPProvider provider;
+	private long intervalInMillis;
+	private int retries;
 
 	/**
-     * new TransactionHandler with Tx
-	 * @param provider provider used by this transaction holder
-	 * @param transactionObject Tx
+	 * @param provider
+	 * @param transactionObject
+	 * @param intervalInMillis
+	 * @param retries 
+	 
 	 */
-	public TransactionHandler(HTTPProvider provider, TransactionObject transactionObj) {
+	public TransactionHandler(HTTPProvider provider, TransactionObject transactionObject, long intervalInMillis, int retries) {
 		this.provider = provider;
-		this.transactionObject = transactionObj;
+		this.intervalInMillis = intervalInMillis;
+		this.retries = retries;
+		this.transactionObject = transactionObject;
 	}
+
+
+
+	/**
+	 * @return the intervalInMillis
+	 */
+	public long getIntervalInMillis() {
+		return intervalInMillis;
+	}
+
+
+
+	/**
+	 * @param intervalInMillis the intervalInMillis to set
+	 */
+	public void setIntervalInMillis(long intervalInMillis) {
+		this.intervalInMillis = intervalInMillis;
+	}
+
+
+
+	/**
+	 * @return the retries
+	 */
+	public int getRetries() {
+		return retries;
+	}
+
+
+
+	/**
+	 * @param retries the retries to set
+	 */
+	public void setRetries(int retries) {
+		this.retries = retries;
+	}
+
 
 	private TransactionObject transactionObject;
 
-    /**
-     * new TransactionHandler without default transactionObject
-     * @param provider provider
-     */
-	public TransactionHandler(HTTPProvider provider) {
-		this.provider = provider;
-	}
+  
 
-	class Hash {
-	    String hash;
-    }
 
 	/**
 	 * Send a transactionObject
@@ -50,8 +85,8 @@ public class TransactionHandler {
 		String api = "sendTx";
 		String query = gson.toJson(tx);
 		String jsonHash = this.provider.sendPost(api, query);
-		Hash hash = gson.fromJson(jsonHash, Hash.class);
-		return Polling(hash.hash, provider.getIntervalInMillis(), provider.getTimes());
+		TransactionHash hash = gson.fromJson(jsonHash, TransactionHash.class);
+		return Polling(hash.getHash(), getIntervalInMillis(), getRetries()+1);
 	}
 
 
@@ -117,13 +152,13 @@ public class TransactionHandler {
                 }
             }
 
-            break;
+            if (resStr.startsWith("{")) {
+                return TxReceipt.getTxReceipt(resStr);
+            }
         }
-        if (resStr.startsWith("{")) {
-            return TxReceipt.getTxReceipt(resStr);
-        } else {
+       
             throw new TimeoutException();
-        }
+      
     }
 
 }

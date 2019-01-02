@@ -1,4 +1,4 @@
-# iost.java
+new Config(gasRatio, gasLimit, delay, expiration, defaultLimit);# iost.java
 IOST Java SDK
 
 Example eclipse project is included inside example folder
@@ -17,10 +17,10 @@ mvn package
 ## Creating a new account
 
   // Create HTTPProvider Object
-HTTPProvider provider = new HTTPProvider("http://127.0.0.1:30001/", 21, 500, 3);				
+HTTPProvider provider = new HTTPProvider("http://127.0.0.1:30001/", 21);				
 				
 	// Create a confiuartion.
-	Config config = new Config();
+	Config config = new Config(gasRatio, gasLimit, delay, expiration, amountLimit);
 				
 	// Create IOST Object from Config and HTTPProvider			
 				
@@ -49,10 +49,10 @@ HTTPProvider provider = new HTTPProvider("http://127.0.0.1:30001/", 21, 500, 3);
 				
 	
 	// Initiating transaction handler
-		TransactionHandler transactionHandler = new TransactionHandler(provider, transactionObj);
+	TransactionHandler transactionHandler = new TransactionHandler(provider, transactionObj, 30, 3);
 	
 	// sending transaction and getting receipt 
-		TxReceipt receipt = transaction.sendTx();		
+		TxReceipt receipt = transactionHandler.sendTx();		
 			
 		
 ## TRANSFER 

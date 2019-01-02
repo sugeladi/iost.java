@@ -40,11 +40,10 @@ public class TransactionObject {
 		return hash;
 	}
 
-	public TransactionObject(long gasRatio, long gasLimit, long delay) {
+	public TransactionObject(long gasRatio, long gasLimit) {
 		super();
 		this.gas_ratio = gasRatio;
 		this.gas_limit = gasLimit;
-		this.delay = delay;
 		this.publisher = "";
 	}
 

@@ -42,7 +42,7 @@ class ExampleIost {
 	 * Test BlockChain
 	 */
 	public void blockchain() {
-		HTTPProvider provider = new HTTPProvider("http://3.0.192.33:30001/", 21, 500, 0);
+		HTTPProvider provider = new HTTPProvider("http://3.0.192.33:30001/", 21);
 		Api api = new Api(provider);
 		try {
 
@@ -90,7 +90,7 @@ class ExampleIost {
 
 		try {
 
-			HTTPProvider provider = new HTTPProvider("http://3.0.192.33:30001/", 21, 500, 3);
+			HTTPProvider provider = new HTTPProvider("http://3.0.192.33:30001/", 21);
 			Config config = new Config();
 			IOST iost = new IOST(config, provider);
 
@@ -108,7 +108,7 @@ class ExampleIost {
 			transactionObj = account.signTx(transactionObj);
 
 			// send tx and using transaction handler
-			TransactionHandler transactionHandler = new TransactionHandler(provider, transactionObj);
+			TransactionHandler transactionHandler = new TransactionHandler(provider, transactionObj, 30, 3);
 			TxReceipt receipt = transactionHandler.sendTx();
 			System.out.println(receipt.getMessage());
 
@@ -138,8 +138,9 @@ class ExampleIost {
 	 */
 	public void newAccount() {
 		try {
-			HTTPProvider provider = new HTTPProvider("http://3.0.192.33:30001/", 21, 500, 0);
-			IOST iost = new IOST(provider);
+			HTTPProvider provider = new HTTPProvider("http://3.0.192.33:30001/", 21);
+			Config config = new Config();
+			IOST iost = new IOST(config, provider);
 
 			// init admin account
 			Account account = new Account("admin");
@@ -159,7 +160,7 @@ class ExampleIost {
 			transactionObject = account.signTx(transactionObject);
 
 			// send tx and handler result
-			TransactionHandler transactionHandler = new TransactionHandler(provider, transactionObject);
+			TransactionHandler transactionHandler = new TransactionHandler(provider, transactionObject, 100, 3);
 			TxReceipt receipt = transactionHandler.sendTx();
 			System.out.println(receipt.getMessage());
 			System.out.println(receipt.getGasUsage());

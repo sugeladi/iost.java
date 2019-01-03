@@ -59,6 +59,10 @@ public class TransactionObject {
 		this.delay = delay;
 	}
 
+	public void setNow(long timeInNano) {
+		this.time = timeInNano;
+	}
+
 	public long getExpiration() {
 		return expiration;
 	}

@@ -46,6 +46,7 @@ class ExampleIost {
 		Api api = new Api(provider);
 		try {
 
+		    System.out.println("======= test of get info");
 			NodeInfo info = api.getNodeInfoObject(500, 2);
 			System.out.println(info.getGitHash());
 			System.out.println(info.getNetwork().getId());
@@ -78,8 +79,8 @@ class ExampleIost {
 
 			ContractStorageData contractStorage = api.getContractStorageData("vote_producer.iost", "producer00001",
 					"producerTable", true, 300, 3);
-			System.out.println(contractStorage.getData().getPubkey());
-			System.out.println(contractStorage.getData().getRegisterFee());
+			System.out.println(contractStorage.getData().getClass());
+			System.out.println(contractStorage.getData().toString());
 		} catch (TimeoutException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

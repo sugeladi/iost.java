@@ -16,7 +16,7 @@ public class TransactionHandler {
 	/**
      * new TransactionHandler with Tx
 	 * @param provider provider used by this transaction holder
-	 * @param transactionObject Tx
+	 * @param transactionObj Tx
 	 */
 	public TransactionHandler(HTTPProvider provider, TransactionObject transactionObj) {
 		this.provider = provider;
@@ -40,15 +40,15 @@ public class TransactionHandler {
 	/**
 	 * Send a transactionObject
      *
-	 * @param transactionObject transactionObject tobe sent
+	 * @param transactionObj transactionObject tobe sent
 	 * @throws IOException throw while send failed
      * @return transactionObject hash
 	 * @throws TimeoutException 
 	 */
-	public TxReceipt sendTx(TransactionObject tx) throws IOException, TimeoutException {
+	public TxReceipt sendTx(TransactionObject transactionObj) throws IOException, TimeoutException {
 	    Gson gson = new Gson();
 		String api = "sendTx";
-		String query = gson.toJson(tx);
+		String query = gson.toJson(transactionObj);
 		String jsonHash = this.provider.sendPost(api, query);
 		Hash hash = gson.fromJson(jsonHash, Hash.class);
 		return Polling(hash.hash, provider.getIntervalInMillis(), provider.getTimes());

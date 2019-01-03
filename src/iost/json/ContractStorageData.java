@@ -5,10 +5,33 @@ import com.google.gson.Gson;
 public class ContractStorageData {
 	
 	private ContractStorage data;
+	private String error;
 	
+	/**
+	 * @return the error
+	 */
+	public String getError() {
+		return error;
+	}
+
+	/**
+	 * @param error the error to set
+	 */
+	public void setError(String error) {
+		this.error = error;
+	}
+
 	public static ContractStorageData getContractStorageData(String json) {
-		Gson gson = new Gson();
-        return gson.fromJson(json, ContractStorageData.class);
+		String st = "{\"data\":\"";
+		String et = "\"}";
+		json = json.substring(st.length(), json.lastIndexOf(et));
+		ContractStorageData data = new ContractStorageData();
+		if (json.startsWith("{")) {
+			 data.data = ContractStorage.getContractStorage(json);	
+		}else {data.error = json;}
+	 
+	 
+	 return data;
 	}
 
 	/**

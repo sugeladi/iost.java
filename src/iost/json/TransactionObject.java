@@ -31,11 +31,11 @@ public class TransactionObject {
 	private String publisher;
 	private TxReceipt tx_receipt;
 	private String hash;
-	
+
 	public void addApprove(String token, String value) {
-        setAmount_limit(new AmountLimitObject(token, value));
-    }
-	
+		setAmount_limit(new AmountLimitObject(token, value));
+	}
+
 	public String getTxHash() {
 		return hash;
 	}
@@ -56,6 +56,17 @@ public class TransactionObject {
 		this.time = (long) (date.getTime() * 1e6);
 		this.expiration = (long) (this.time + expirationInSecound * 1e9);
 		this.delay = delay;
+	}
+
+	/*
+	 * users can set time to 10 mins later to access a cold wallet getting a
+	 * signature
+	 */
+	public void setNow() {
+		long expirationInSecound = 10 * 60;
+		Date date = new Date();
+		this.time = (long) (date.getTime() * 1e6);
+		this.expiration = (long) (this.time + expirationInSecound * 1e9);
 	}
 
 	public long getExpiration() {
@@ -86,7 +97,7 @@ public class TransactionObject {
 	public byte[] getPublishHash() {
 		byte[] input = getBytes(1);
 		DigestSHA3 sha3a = new Digest256();
-        sha3a.update(input);
+		sha3a.update(input);
 		byte[] hs = sha3a.digest();
 		return hs;
 	}
@@ -168,12 +179,11 @@ public class TransactionObject {
 		Codec c = new Codec();
 		c.pushInt64(this.time);
 		c.pushInt64(this.expiration);
-		c.pushInt64(this.gas_ratio*100);
-		c.pushInt64(this.gas_limit*100);
+		c.pushInt64(this.gas_ratio * 100);
+		c.pushInt64(this.gas_limit * 100);
 		c.pushInt64(this.delay);
 		c.arrayStart();
 
-		
 		Iterator<String> iterator = this.signers.iterator();
 		while (iterator.hasNext()) {
 			c.pushString(iterator.next());
@@ -238,6 +248,5 @@ public class TransactionObject {
 	public void setTx_receipt(TxReceipt tx_receipt) {
 		this.tx_receipt = tx_receipt;
 	}
-
 
 }

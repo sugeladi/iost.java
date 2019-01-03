@@ -33,9 +33,10 @@ class ExampleIost {
 	public static void main(String args[]) throws InvalidAlgorithmParameterException, NoSuchAlgorithmException,
 			NoSuchProviderException, InvalidKeySpecException, UnsupportedEncodingException {
 		ExampleIost algo = new ExampleIost();
+		algo.blockchain();
 		algo.transfer();
 		algo.newAccount();
-		algo.blockchain();
+		System.exit(0);
 	}
 
 	/*
@@ -78,8 +79,12 @@ class ExampleIost {
 
 			ContractStorageData contractStorage = blockChain.getContractStorageData("vote_producer.iost", "producer00001",
 					"producerTable", true, 300, 3);
+			if(contractStorage.getError() == null) {
 			System.out.println(contractStorage.getData().getPubkey());
 			System.out.println(contractStorage.getData().getRegisterFee());
+			}else {
+				System.out.println("Error Data: "+contractStorage.getError());
+			}
 		} catch (TimeoutException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -93,10 +98,9 @@ class ExampleIost {
 			HTTPProvider provider = new HTTPProvider("http://3.0.192.33:30001/", 21);
 			Config config = new Config();
 			IOST iost = new IOST(config, provider);
-			
-			
+
 			// init admin account
-			Account account = new iost.Account("admin");
+			Account account = new Account("admin");
 			KeyPair kp = new KeyPair(
 					Base58.decode(
 							"2yquS3ySrGWPEKywCPzX4RTJugqRh7kJSo5aehsLYPEWkUxBWA39oMrZ7ZxuM4fgyXYs2cPwh5n8aNNpH5x2VyK1"),
@@ -109,7 +113,7 @@ class ExampleIost {
 			transactionObj = account.signTx(transactionObj);
 
 			// send tx and using transaction handler
-			TransactionHandler transactionHandler = new TransactionHandler(iost.getProvider(), transactionObj, 30, 3);
+			TransactionHandler transactionHandler = new TransactionHandler(provider, transactionObj, 30, 3);
 			TxReceipt receipt = transactionHandler.sendTx();
 			System.out.println(receipt.getMessage());
 

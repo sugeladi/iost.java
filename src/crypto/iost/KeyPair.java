@@ -121,6 +121,12 @@ public class KeyPair {
 			hex = "0" + hex;
 		}
 		byte[] crc32 = Hex.decode(hex);
+		for(int i=0; i<crc32.length/2; i++){ 
+			byte temp = crc32[i]; 
+			crc32[i] = crc32[crc32.length -i -1]; 
+			crc32[crc32.length -i -1] = temp; 
+			}
+
 		byte[] data2 = Arrays.copyOf(data, data.length + crc32.length);
 		System.arraycopy(crc32, 0, data2, data.length, crc32.length);
 		return "IOST" + Base58.encode(data2);

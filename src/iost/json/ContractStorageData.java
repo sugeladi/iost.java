@@ -1,7 +1,5 @@
 package iost.json;
 
-import com.google.gson.Gson;
-
 public class ContractStorageData {
 	
 	private ContractStorage data;

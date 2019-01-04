@@ -116,6 +116,7 @@ class ExampleIost {
 			TransactionHandler transactionHandler = new TransactionHandler(provider, transactionObj, 30, 3);
 			TxReceipt receipt = transactionHandler.sendTx();
 			System.out.println(receipt.getMessage());
+			
 
 		} catch (NoSuchAlgorithmException | NoSuchProviderException e) {
 			// TODO Auto-generated catch block
@@ -159,9 +160,12 @@ class ExampleIost {
 			// new keypair and create account
 			KeyPair newKP = new KeyPair(Ed25519.ALGORITHMNUM);
 
-			
+			Account testAccount = new Account("test1c");
+			testAccount.addKeyPair(newKP, "owner");
+			testAccount.addKeyPair(newKP, "active");
 			// send a call
-			TransactionObject transactionObject = iost.newAccount("test1", "admin", newKP.getId(), newKP.getId(), 1024, 10);
+			
+			TransactionObject transactionObject = iost.newAccount(testAccount.getId(), "admin", newKP.getId(), newKP.getId(), 1024, 10);
 			transactionObject = account.signTx(transactionObject);
 
 			// send tx and handler result
@@ -169,6 +173,12 @@ class ExampleIost {
 			TxReceipt receipt = transactionHandler.sendTx();
 			System.out.println(receipt.getMessage());
 			System.out.println(receipt.getGasUsage());
+			
+			Blockchain blockchain = new Blockchain(provider);
+			iost.json.Account jaccount = blockchain.getAccount(testAccount.getId(), "true", 500, 3);
+			System.out.println(jaccount.getBalance());
+			System.out.println(jaccount.getRamInfo().getAvailable());
+			
 		} catch (InvalidAlgorithmParameterException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();

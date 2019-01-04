@@ -31,20 +31,19 @@ public class TransactionObject {
 	private String publisher;
 	private TxReceipt tx_receipt;
 	private String hash;
-	
+
 	public void addApprove(String token, String value) {
-        setAmount_limit(new AmountLimitObject(token, value));
-    }
-	
+		setAmount_limit(new AmountLimitObject(token, value));
+	}
+
 	public String getTxHash() {
 		return hash;
 	}
 
-	public TransactionObject(long gasRatio, long gasLimit, long delay) {
+	public TransactionObject(long gasRatio, long gasLimit) {
 		super();
 		this.gas_ratio = gasRatio;
 		this.gas_limit = gasLimit;
-		this.delay = delay;
 		this.publisher = "";
 	}
 
@@ -52,15 +51,10 @@ public class TransactionObject {
 		return time;
 	}
 
-	public void setTime(long expirationInSecound, long delay) {
-		Date date = new Date();
-		this.time = (long) (date.getTime() * 1e6);
+	public void setTime(long nowInMillis, long expirationInSecound, long delay) {
+		this.time = (long) (nowInMillis * 1e6);
 		this.expiration = (long) (this.time + expirationInSecound * 1e9);
 		this.delay = delay;
-	}
-
-	public void setNow(long timeInNano) {
-		this.time = timeInNano;
 	}
 
 	public long getExpiration() {
@@ -91,7 +85,7 @@ public class TransactionObject {
 	public byte[] getPublishHash() {
 		byte[] input = getBytes(1);
 		DigestSHA3 sha3a = new Digest256();
-        sha3a.update(input);
+		sha3a.update(input);
 		byte[] hs = sha3a.digest();
 		return hs;
 	}
@@ -173,12 +167,11 @@ public class TransactionObject {
 		Codec c = new Codec();
 		c.pushInt64(this.time);
 		c.pushInt64(this.expiration);
-		c.pushInt64(this.gas_ratio*100);
-		c.pushInt64(this.gas_limit*100);
+		c.pushInt64(this.gas_ratio * 100);
+		c.pushInt64(this.gas_limit * 100);
 		c.pushInt64(this.delay);
 		c.arrayStart();
 
-		
 		Iterator<String> iterator = this.signers.iterator();
 		while (iterator.hasNext()) {
 			c.pushString(iterator.next());
@@ -243,6 +236,5 @@ public class TransactionObject {
 	public void setTx_receipt(TxReceipt tx_receipt) {
 		this.tx_receipt = tx_receipt;
 	}
-
 
 }

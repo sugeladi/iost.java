@@ -8,7 +8,7 @@ import java.security.SignatureException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.concurrent.TimeoutException;
 
-import blockchain.Api;
+import blockchain.BlockChain;
 import blockchain.Config;
 import blockchain.TransactionHandler;
 import crypto.Base58;
@@ -31,50 +31,50 @@ class ExampleIost {
 	public static void main(String args[]) throws InvalidAlgorithmParameterException, NoSuchAlgorithmException,
 			NoSuchProviderException, InvalidKeySpecException, UnsupportedEncodingException {
 		ExampleIost algo = new ExampleIost();
-		algo.blockchain();
 		algo.transfer();
 		algo.newAccount();
+		algo.blockchain();
 	}
 
 	/*
 	 * Test BlockChain
 	 */
 	public void blockchain() {
-		HTTPProvider provider = new HTTPProvider("http://3.0.192.33:30001/", 21, 500, 0);
-		Api api = new Api(provider);
+		HTTPProvider provider = new HTTPProvider("http://3.0.192.33:30001/", 21);
+		BlockChain blockChain = new BlockChain(provider);
 		try {
 
-			NodeInfo info = api.getNodeInfoObject(500, 2);
+			NodeInfo info = blockChain.getNodeInfoObject(500, 2);
 			System.out.println(info.getGitHash());
 			System.out.println(info.getNetwork().getId());
-			ChainInfo chain = api.getChainInfoObject(500, 2);
+			ChainInfo chain = blockChain.getChainInfoObject(500, 2);
 			System.out.println(chain.getLibBlockHash());
 			System.out.println(chain.getHeadBlockHash());
-			GasRatio gasR = api.getGasRatioObject(500, 3);
+			GasRatio gasR = blockChain.getGasRatioObject(500, 3);
 			System.out.println(gasR.getLowestGasRatio());
 			System.out.println(gasR.getMedianGasRatio());
 
-			RamInfo ramInfo = api.getRamInfoObject(500, 3);
+			RamInfo ramInfo = blockChain.getRamInfoObject(500, 3);
 			System.out.println(ramInfo.getAvailableRam());
 			System.out.println(ramInfo.getSellPrice());
 
-			BlockFromApi block = api.getBlockByNumber("1", "true", 500, 3);
+			BlockFromApi block = blockChain.getBlockByNumber("1", "true", 500, 3);
 			System.out.println(block.getBlock().getTxCount());
 			System.out.println(block.getBlock().getNumber());
 			System.out.println(block.getBlock().getHash());
 
-			iost.json.Account account = api.getAccount("admin", "true", 500, 3);
+			iost.json.Account account = blockChain.getAccount("admin", "true", 500, 3);
 			System.out.println(account.getBalance());
 			System.out.println(account.getRamInfo().getTotalRam());
 
-			TokenBalance tokenBalance = api.getTokenBalance("admin", "iost", "true", 500, 3);
+			TokenBalance tokenBalance = blockChain.getBalance("admin", "iost", "true", 500, 3);
 			System.out.println(tokenBalance.getBalance());
 
-			Contract contract = api.getContract("base.iost", "true", 500, 3);
+			Contract contract = blockChain.getContract("base.iost", "true", 500, 3);
 			System.out.println(contract.getLanguage());
 			System.out.println(contract.getId());
 
-			ContractStorageData contractStorage = api.getContractStorageData("vote_producer.iost", "producer00001",
+			ContractStorageData contractStorage = blockChain.getContractStorageData("vote_producer.iost", "producer00001",
 					"producerTable", true, 300, 3);
 			System.out.println(contractStorage.getData().getPubkey());
 			System.out.println(contractStorage.getData().getRegisterFee());
@@ -88,12 +88,13 @@ class ExampleIost {
 
 		try {
 
-			HTTPProvider provider = new HTTPProvider("http://3.0.192.33:30001/", 21, 500, 3);
+			HTTPProvider provider = new HTTPProvider("http://3.0.192.33:30001/", 21);
 			Config config = new Config();
 			IOST iost = new IOST(config, provider);
-
+			
+			
 			// init admin account
-			Account account = new Account("admin");
+			Account account = new iost.Account("admin");
 			KeyPair kp = new KeyPair(
 					Base58.decode(
 							"2yquS3ySrGWPEKywCPzX4RTJugqRh7kJSo5aehsLYPEWkUxBWA39oMrZ7ZxuM4fgyXYs2cPwh5n8aNNpH5x2VyK1"),
@@ -105,8 +106,8 @@ class ExampleIost {
 			TransactionObject transactionObj = iost.transfer("iost", "admin", "admin", "10.000", "");
 			transactionObj = account.signTx(transactionObj);
 
-			// send tx and handler result
-			TransactionHandler transactionHandler = new TransactionHandler(provider, transactionObj);
+			// send tx and using transaction handler
+			TransactionHandler transactionHandler = new TransactionHandler(iost.getProvider(), transactionObj, 30, 3);
 			TxReceipt receipt = transactionHandler.sendTx();
 			System.out.println(receipt.getMessage());
 
@@ -136,8 +137,9 @@ class ExampleIost {
 	 */
 	public void newAccount() {
 		try {
-			HTTPProvider provider = new HTTPProvider("http://3.0.192.33:30001/", 21, 500, 0);
-			IOST iost = new IOST(provider);
+			HTTPProvider provider = new HTTPProvider("http://3.0.192.33:30001/", 21);
+			Config config = new Config();
+			IOST iost = new IOST(config, provider);
 
 			// init admin account
 			Account account = new Account("admin");
@@ -157,7 +159,7 @@ class ExampleIost {
 			transactionObject = account.signTx(transactionObject);
 
 			// send tx and handler result
-			TransactionHandler transactionHandler = new TransactionHandler(provider, transactionObject);
+			TransactionHandler transactionHandler = new TransactionHandler(provider, transactionObject, 100, 3);
 			TxReceipt receipt = transactionHandler.sendTx();
 			System.out.println(receipt.getMessage());
 			System.out.println(receipt.getGasUsage());

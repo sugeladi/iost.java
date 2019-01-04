@@ -10,7 +10,7 @@ import java.security.SignatureException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.concurrent.TimeoutException;
 
-import blockchain.BlockChain;
+import blockchain.Blockchain;
 import blockchain.Config;
 import blockchain.TransactionHandler;
 import crypto.Base58;
@@ -40,44 +40,44 @@ class ExampleIost {
 	}
 
 	/*
-	 * Test BlockChain
+	 * Test Blockchain
 	 */
 	public void blockchain() {
 		HTTPProvider provider = new HTTPProvider("http://3.0.192.33:30001/", 21);
-		BlockChain blockChain = new BlockChain(provider);
+		Blockchain blockchain = new Blockchain(provider);
 		try {
 
-			NodeInfo info = blockChain.getNodeInfoObject(500, 2);
+			NodeInfo info = blockchain.getNodeInfoObject(500, 2);
 			System.out.println(info.getGitHash());
 			System.out.println(info.getNetwork().getId());
-			ChainInfo chain = blockChain.getChainInfoObject(500, 2);
+			ChainInfo chain = blockchain.getChainInfoObject(500, 2);
 			System.out.println(chain.getLibBlockHash());
 			System.out.println(chain.getHeadBlockHash());
-			GasRatio gasR = blockChain.getGasRatioObject(500, 3);
+			GasRatio gasR = blockchain.getGasRatioObject(500, 3);
 			System.out.println(gasR.getLowestGasRatio());
 			System.out.println(gasR.getMedianGasRatio());
 
-			RamInfo ramInfo = blockChain.getRamInfoObject(500, 3);
+			RamInfo ramInfo = blockchain.getRamInfoObject(500, 3);
 			System.out.println(ramInfo.getAvailableRam());
 			System.out.println(ramInfo.getSellPrice());
 
-			BlockFromApi block = blockChain.getBlockByNumber("1", "true", 500, 3);
+			BlockFromApi block = blockchain.getBlockByNumber("1", "true", 500, 3);
 			System.out.println(block.getBlock().getTxCount());
 			System.out.println(block.getBlock().getNumber());
 			System.out.println(block.getBlock().getHash());
 
-			iost.json.Account account = blockChain.getAccount("admin", "true", 500, 3);
+			iost.json.Account account = blockchain.getAccount("admin", "true", 500, 3);
 			System.out.println(account.getBalance());
 			System.out.println(account.getRamInfo().getTotalRam());
 
-			TokenBalance tokenBalance = blockChain.getBalance("admin", "iost", "true", 500, 3);
+			TokenBalance tokenBalance = blockchain.getBalance("admin", "iost", "true", 500, 3);
 			System.out.println(tokenBalance.getBalance());
 
-			Contract contract = blockChain.getContract("base.iost", "true", 500, 3);
+			Contract contract = blockchain.getContract("base.iost", "true", 500, 3);
 			System.out.println(contract.getLanguage());
 			System.out.println(contract.getId());
 
-			ContractStorageData contractStorage = blockChain.getContractStorageData("vote_producer.iost", "producer00001",
+			ContractStorageData contractStorage = blockchain.getContractStorageData("vote_producer.iost", "producer00001",
 					"producerTable", true, 300, 3);
 			if(contractStorage.getError() == null) {
 			System.out.println(contractStorage.getData().getPubkey());

@@ -15,9 +15,9 @@ import iost.json.Token721Metadata;
 import iost.json.TokenBalance;
 import provider.HTTPProvider;
 
-public class BlockChain extends BaseBlockChain {
+public class Blockchain extends BaseBlockchain {
 
-	public BlockChain(HTTPProvider provider) {
+	public Blockchain(HTTPProvider provider) {
 		super(provider);
 	}
 

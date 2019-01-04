@@ -9,7 +9,7 @@ import iost.json.ContractStorageRequest;
 import provider.HTTPProvider;
 
 
-public class BaseBlockChain {
+public class BaseBlockchain {
 
 	private HTTPProvider _provider;
 	/**
@@ -32,7 +32,7 @@ public class BaseBlockChain {
  * @param {RPC}rpc - 通过rpc生成Blockchain模块
 	 */
 	
-	public BaseBlockChain(HTTPProvider provider) {
+	public BaseBlockchain(HTTPProvider provider) {
 		this._provider = provider;
 	}
 	

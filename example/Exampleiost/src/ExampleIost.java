@@ -8,7 +8,7 @@ import java.security.SignatureException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.concurrent.TimeoutException;
 
-import blockchain.BlockChain;
+import blockchain.Blockchain;
 import blockchain.Config;
 import blockchain.TransactionHandler;
 import crypto.Base58;
@@ -37,11 +37,11 @@ class ExampleIost {
 	}
 
 	/*
-	 * Test BlockChain
+	 * Test Blockchain
 	 */
 	public void blockchain() {
 		HTTPProvider provider = new HTTPProvider("http://3.0.192.33:30001/", 21);
-		BlockChain blockChain = new BlockChain(provider);
+		Blockchain blockChain = new Blockchain(provider);
 		try {
 
 			NodeInfo info = blockChain.getNodeInfoObject(500, 2);

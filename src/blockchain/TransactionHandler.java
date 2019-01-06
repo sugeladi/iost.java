@@ -165,7 +165,7 @@ public class TransactionHandler {
             }
         }
 
-            throw new TimeoutException();
+            throw new TimeoutException(hash);
 
     }
 

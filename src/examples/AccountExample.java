@@ -43,11 +43,13 @@ public class AccountExample {
 		ArrayList<Account> accounts = new ArrayList<Account>();
 		String userPrefix = new Date().getTime() + "";
 		userPrefix = "u" + userPrefix.substring(userPrefix.length() - 8);
+		long initialRAM = 1024;
+		double initialGasPledge = 10;
 
 		for (int i = 0; i < totalAccounts; i++) {
 			KeyPair newKP = new KeyPair(Ed25519.ALGORITHMNUM);
 			TransactionObject transactionObject = iost.newAccount(userPrefix + i, "admin", newKP.getId(), newKP.getId(),
-					10241024, 10234);
+					initialRAM, initialGasPledge);
 			transactionObject = account.signTx(transactionObject);
 
 			// send tx and handler result

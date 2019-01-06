@@ -1,4 +1,4 @@
-package iost.examples;
+package examples;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -225,4 +225,4 @@ class ExampleIost {
 		}
 	}
 
-	}
+}

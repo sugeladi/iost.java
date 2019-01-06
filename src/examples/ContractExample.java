@@ -1,4 +1,4 @@
-package iost.examples;
+package examples;
 
 import java.util.ArrayList;
 import java.util.concurrent.TimeoutException;

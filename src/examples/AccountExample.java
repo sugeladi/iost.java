@@ -1,4 +1,4 @@
-package iost.examples;
+package examples;
 
 import java.io.IOException;
 import java.security.InvalidAlgorithmParameterException;
@@ -47,7 +47,7 @@ public class AccountExample {
 		for (int i = 0; i < totalAccounts; i++) {
 			KeyPair newKP = new KeyPair(Ed25519.ALGORITHMNUM);
 			TransactionObject transactionObject = iost.newAccount(userPrefix + i, "admin", newKP.getId(), newKP.getId(),
-					1024, 10);
+					10241024, 10234);
 			transactionObject = account.signTx(transactionObject);
 
 			// send tx and handler result
